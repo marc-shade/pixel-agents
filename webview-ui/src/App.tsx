@@ -42,6 +42,7 @@ function App() {
   const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null)
   const [moveDialog, setMoveDialog] = useState<MoveDialog | null>(null)
   const [agentTools, setAgentTools] = useState<Record<number, ToolActivity[]>>({})
+  const [agentStatuses, setAgentStatuses] = useState<Record<number, string>>({})
 
   // Dismiss context menu on click outside
   const dismissContextMenu = useCallback(() => {
@@ -68,6 +69,12 @@ function App() {
         setAgents((prev) => prev.filter((a) => a.id !== msg.id))
         setSelectedAgent((prev) => (prev === msg.id ? null : prev))
         setAgentTools((prev) => {
+          if (!(msg.id in prev)) return prev
+          const next = { ...prev }
+          delete next[msg.id as number]
+          return next
+        })
+        setAgentStatuses((prev) => {
           if (!(msg.id in prev)) return prev
           const next = { ...prev }
           delete next[msg.id as number]
@@ -130,6 +137,18 @@ function App() {
           delete next[id]
           return next
         })
+      } else if (msg.type === 'agentStatus') {
+        const id = msg.id as number
+        const status = msg.status as string
+        setAgentStatuses((prev) => {
+          if (status === 'active') {
+            if (!(id in prev)) return prev
+            const next = { ...prev }
+            delete next[id]
+            return next
+          }
+          return { ...prev, [id]: status }
+        })
       }
     }
     window.addEventListener('message', handler)
@@ -190,19 +209,29 @@ function App() {
 
   const agentsByFolder = (folderId: string) => agents.filter((a) => a.folderId === folderId)
 
-  const renderAgentButton = (agent: AgentInfo) => {
+  const renderAgentCard = (agent: AgentInfo) => {
     const isSelected = selectedAgent === agent.id
     const tools = agentTools[agent.id] || []
+    const status = agentStatuses[agent.id]
+    const hasActiveTools = tools.some((t) => !t.done)
     return (
-      <div key={agent.id} style={{ display: 'inline-flex', flexDirection: 'column', gap: 2 }}>
+      <div
+        key={agent.id}
+        style={{
+          border: `1px solid ${isSelected ? 'var(--vscode-focusBorder, #007fd4)' : 'var(--vscode-widget-border, transparent)'}`,
+          borderRadius: 4,
+          padding: '6px 8px',
+          background: isSelected ? 'var(--vscode-list-activeSelectionBackground, rgba(255,255,255,0.04))' : undefined,
+        }}
+      >
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 0 }}>
           <button
             onClick={() => handleSelectAgent(agent.id)}
             onContextMenu={(e) => handleAgentContextMenu(e, agent.id)}
             style={{
               borderRadius: '3px 0 0 3px',
-              padding: '8px 12px',
-              fontSize: '14px',
+              padding: '6px 10px',
+              fontSize: '13px',
               background: isSelected ? 'var(--vscode-button-background)' : undefined,
               color: isSelected ? 'var(--vscode-button-foreground)' : undefined,
               fontWeight: isSelected ? 'bold' : undefined,
@@ -214,8 +243,8 @@ function App() {
             onClick={() => vscode.postMessage({ type: 'closeAgent', id: agent.id })}
             style={{
               borderRadius: '0 3px 3px 0',
-              padding: '8px 10px',
-              fontSize: '14px',
+              padding: '6px 8px',
+              fontSize: '13px',
               opacity: 0.7,
               background: isSelected ? 'var(--vscode-button-background)' : undefined,
               color: isSelected ? 'var(--vscode-button-foreground)' : undefined,
@@ -225,8 +254,8 @@ function App() {
             ✕
           </button>
         </span>
-        {tools.length > 0 && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, paddingLeft: 4 }}>
+        {(tools.length > 0 || status === 'waiting') && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 1, marginTop: 4, paddingLeft: 4 }}>
             {tools.map((tool) => (
               <span
                 key={tool.toolId}
@@ -254,6 +283,29 @@ function App() {
                 {tool.status}
               </span>
             ))}
+            {status === 'waiting' && !hasActiveTools && (
+              <span
+                style={{
+                  fontSize: '11px',
+                  opacity: 0.85,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: '50%',
+                    background: 'var(--vscode-charts-yellow, #cca700)',
+                    display: 'inline-block',
+                    flexShrink: 0,
+                  }}
+                />
+                Waiting for input
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -297,11 +349,11 @@ function App() {
               📁 {folder.name}{' '}
               <span style={{ opacity: 0.6, fontSize: '0.9em' }}>({folder.path})</span>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', paddingLeft: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, paddingLeft: 8 }}>
               {folderAgents.length === 0 && (
                 <span style={{ opacity: 0.5, fontSize: '13px' }}>No agents</span>
               )}
-              {folderAgents.map(renderAgentButton)}
+              {folderAgents.map(renderAgentCard)}
             </div>
           </div>
         )
