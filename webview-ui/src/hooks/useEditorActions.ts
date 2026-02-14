@@ -3,7 +3,7 @@ import type { OfficeState } from '../office/engine/officeState.js'
 import type { EditorState } from '../office/editor/editorState.js'
 import { EditTool } from '../office/types.js'
 import { TileType } from '../office/types.js'
-import type { OfficeLayout, EditTool as EditToolType, TileType as TileTypeVal, FloorColor } from '../office/types.js'
+import type { OfficeLayout, EditTool as EditToolType, TileType as TileTypeVal, FloorColor, PlacedFurniture } from '../office/types.js'
 import { paintTile, placeFurniture, removeFurniture, moveFurniture, rotateFurniture, canPlaceFurniture } from '../office/editor/editorActions.js'
 import { getCatalogEntry, getRotatedType } from '../office/layout/furnitureCatalog.js'
 import { defaultZoom } from '../office/toolUtils.js'
@@ -276,13 +276,17 @@ export function useEditorActions(
         setEditorTick((n) => n + 1)
       } else if (canPlaceFurniture(layout, type, col, row)) {
         const uid = `f-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
-        const newLayout = placeFurniture(layout, { uid, type, col, row })
+        const placed: PlacedFurniture = { uid, type, col, row }
+        if (editorState.pickedFurnitureColor) {
+          placed.color = { ...editorState.pickedFurnitureColor }
+        }
+        const newLayout = placeFurniture(layout, placed)
         if (newLayout !== layout) {
           applyEdit(newLayout)
         }
       }
     } else if (editorState.activeTool === EditTool.FURNITURE_PICK) {
-      // Find furniture at clicked tile, copy its type for placement
+      // Find furniture at clicked tile, copy its type and color for placement
       const hit = layout.furniture.find((f) => {
         const entry = getCatalogEntry(f.type)
         if (!entry) return false
@@ -290,6 +294,7 @@ export function useEditorActions(
       })
       if (hit) {
         editorState.selectedFurnitureType = hit.type
+        editorState.pickedFurnitureColor = hit.color ? { ...hit.color } : null
         editorState.activeTool = EditTool.FURNITURE_PLACE
       }
       setEditorTick((n) => n + 1)

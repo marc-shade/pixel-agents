@@ -58,5 +58,6 @@ export function getColorizedFloorSprite(patternIndex: number, color: FloorColor)
     return err
   }
 
-  return getColorizedSprite(key, base, color)
+  // Floor tiles are always colorized (grayscale patterns need Photoshop-style Colorize)
+  return getColorizedSprite(key, base, { ...color, colorize: true })
 }

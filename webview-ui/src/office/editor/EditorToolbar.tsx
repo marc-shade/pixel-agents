@@ -135,7 +135,7 @@ function ColorSlider({ label, value, min, max, onChange }: {
   )
 }
 
-const DEFAULT_FURNITURE_COLOR: FloorColor = { h: 0, s: 50, b: 0, c: 0 }
+const DEFAULT_FURNITURE_COLOR: FloorColor = { h: 0, s: 0, b: 0, c: 0 }
 
 export function EditorToolbar({
   activeTool,
@@ -408,10 +408,28 @@ export function EditorToolbar({
               border: '1px solid rgba(255, 255, 255, 0.1)',
               borderRadius: 3,
             }}>
-              <ColorSlider label="H" value={effectiveColor.h} min={0} max={360} onChange={(v) => handleSelFurnColorChange('h', v)} />
-              <ColorSlider label="S" value={effectiveColor.s} min={0} max={100} onChange={(v) => handleSelFurnColorChange('s', v)} />
+              {effectiveColor.colorize ? (
+                <>
+                  <ColorSlider label="H" value={effectiveColor.h} min={0} max={360} onChange={(v) => handleSelFurnColorChange('h', v)} />
+                  <ColorSlider label="S" value={effectiveColor.s} min={0} max={100} onChange={(v) => handleSelFurnColorChange('s', v)} />
+                </>
+              ) : (
+                <>
+                  <ColorSlider label="H" value={effectiveColor.h} min={-180} max={180} onChange={(v) => handleSelFurnColorChange('h', v)} />
+                  <ColorSlider label="S" value={effectiveColor.s} min={-100} max={100} onChange={(v) => handleSelFurnColorChange('s', v)} />
+                </>
+              )}
               <ColorSlider label="B" value={effectiveColor.b} min={-100} max={100} onChange={(v) => handleSelFurnColorChange('b', v)} />
               <ColorSlider label="C" value={effectiveColor.c} min={-100} max={100} onChange={(v) => handleSelFurnColorChange('c', v)} />
+              <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '10px', color: '#999', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={!!effectiveColor.colorize}
+                  onChange={(e) => onSelectedFurnitureColorChange({ ...effectiveColor, colorize: e.target.checked || undefined })}
+                  style={{ accentColor: 'rgba(90, 140, 255, 0.8)' }}
+                />
+                Colorize
+              </label>
             </div>
           )}
         </div>

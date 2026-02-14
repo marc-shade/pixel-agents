@@ -30,7 +30,7 @@ webview-ui/src/               — React + TypeScript (Vite)
   office/
     types.ts                  — Constants (TILE_SIZE=16, MAP 20x11), interfaces, OfficeLayout, FloorColor
     toolUtils.ts              — STATUS_TO_TOOL mapping, extractToolName(), defaultZoom()
-    colorize.ts               — Shared HSL colorize module (floor + furniture tinting)
+    colorize.ts               — Dual-mode color module: Colorize (grayscale→HSL) + Adjust (HSL shift)
     floorTiles.ts             — Floor sprite storage + colorized cache
     wallTiles.ts              — Wall auto-tile: 16 bitmask sprites from walls.png
     sprites/
@@ -105,7 +105,7 @@ Toggle via "Layout" button. Tools: SELECT (default), Floor paint, Furniture plac
 
 **Floor**: 7 patterns from `floors.png` (grayscale 16×16), colorizable via HSBC sliders (Photoshop Colorize). Color baked per-tile on paint. Wall button. Eyedropper picks pattern+color.
 
-**Furniture**: Ghost preview (green/red validity). R key rotates. Drag-to-move in SELECT. Delete button (red X) + rotate button (blue arrow) on selected items. Any selected furniture shows HSBC color sliders (Color toggle + Clear button); color stored per-item in `PlacedFurniture.color?`. Single undo entry per color-editing session (tracked by `colorEditUidRef`). Pick tool copies type from placed item. Surface items preferred when clicking stacked furniture.
+**Furniture**: Ghost preview (green/red validity). R key rotates. Drag-to-move in SELECT. Delete button (red X) + rotate button (blue arrow) on selected items. Any selected furniture shows HSBC color sliders (Color toggle + Clear button); color stored per-item in `PlacedFurniture.color?`. Single undo entry per color-editing session (tracked by `colorEditUidRef`). Pick tool copies type+color from placed item. Surface items preferred when clicking stacked furniture.
 
 **Undo/Redo**: 50-level, Ctrl+Z/Y. EditActionBar (top-center when dirty): Undo, Redo, Save, Reset.
 
@@ -123,7 +123,7 @@ Toggle via "Layout" button. Tools: SELECT (default), Floor paint, Furniture plac
 
 **Surface placement**: `canPlaceOnSurfaces?: boolean` on `FurnitureCatalogEntry` — items like laptops, monitors, mugs can overlap with all tiles of `isDesk` furniture. `canPlaceFurniture()` builds a desk-tile set and excludes it from collision checks for surface items. Z-sort fix: `layoutToFurnitureInstances()` pre-computes desk zY per tile; surface items get `zY = max(spriteBottom, deskZY + 0.5)` so they render in front of the desk. Set via asset-manager.html "Can Place On Surfaces" checkbox. Exported through `5-export-assets.ts` → `furniture-catalog.json`.
 
-**Colorize module**: Shared `colorize.ts` — Photoshop-style Colorize (grayscale → luminance → contrast → brightness → HSL). Used by floor tiles and furniture color tinting. Generic `Map<string, SpriteData>` cache keyed by arbitrary string. `layoutToFurnitureInstances()` colorizes sprites when `PlacedFurniture.color` is set.
+**Colorize module**: Shared `colorize.ts` with two modes selected by `FloorColor.colorize?` flag. **Colorize mode** (Photoshop-style): grayscale → luminance → contrast → brightness → fixed HSL; always used for floor tiles. **Adjust mode** (default for furniture): shifts original pixel HSL — H rotates hue (±180), S shifts saturation (±100), B/C shift lightness/contrast. Toolbar shows a "Colorize" checkbox to toggle modes. Generic `Map<string, SpriteData>` cache keyed by arbitrary string (includes colorize flag). `layoutToFurnitureInstances()` colorizes sprites when `PlacedFurniture.color` is set.
 
 **Floor tiles**: `floors.png` (112×16, 7 patterns). Cached by (pattern, h, s, b, c). Migration: old layouts auto-mapped to new patterns.
 

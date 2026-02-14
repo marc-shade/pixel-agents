@@ -10,6 +10,9 @@ export class EditorState {
   // Floor color settings (applied to new tiles when painting)
   floorColor: FloorColor = { h: 35, s: 30, b: 15, c: 0 }
 
+  // Picked furniture color (copied by pick tool, applied on placement)
+  pickedFurnitureColor: FloorColor | null = null
+
   // Ghost preview position
   ghostCol = -1
   ghostRow = -1

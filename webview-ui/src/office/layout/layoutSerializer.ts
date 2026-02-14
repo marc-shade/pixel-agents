@@ -56,7 +56,7 @@ export function layoutToFurnitureInstances(furniture: PlacedFurniture[]): Furnit
     let sprite = entry.sprite
     if (item.color) {
       const { h, s, b: bv, c: cv } = item.color
-      sprite = getColorizedSprite(`furn-${item.type}-${h}-${s}-${bv}-${cv}`, entry.sprite, item.color)
+      sprite = getColorizedSprite(`furn-${item.type}-${h}-${s}-${bv}-${cv}-${item.color.colorize ? 1 : 0}`, entry.sprite, item.color)
     }
 
     instances.push({ sprite, x, y, zY })
