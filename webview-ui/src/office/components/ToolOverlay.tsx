@@ -93,7 +93,7 @@ export function ToolOverlay({
         // Position above character
         const sittingOffset = ch.state === CharacterState.TYPE ? 6 : 0
         const screenX = (deviceOffsetX + ch.x * zoom) / dpr
-        const screenY = (deviceOffsetY + (ch.y + sittingOffset - 24) * zoom) / dpr
+        const screenY = (deviceOffsetY + (ch.y + sittingOffset - 32) * zoom) / dpr
 
         // Get activity text
         let activityText: string
@@ -137,13 +137,13 @@ export function ToolOverlay({
                 display: 'flex',
                 alignItems: 'center',
                 gap: 5,
-                background: 'rgba(30, 30, 46, 0.88)',
+                background: '#1e1e2e',
                 border: isSelected
-                  ? '1px solid rgba(255, 255, 255, 0.25)'
-                  : '1px solid rgba(255, 255, 255, 0.1)',
-                borderRadius: 4,
+                  ? '2px solid #6a6a8a'
+                  : '2px solid #4a4a6a',
+                borderRadius: 0,
                 padding: isSelected ? '3px 6px 3px 8px' : '3px 8px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+                boxShadow: '2px 2px 0px #0a0a14',
                 whiteSpace: 'nowrap',
                 maxWidth: 220,
               }}
@@ -162,7 +162,7 @@ export function ToolOverlay({
               )}
               <span
                 style={{
-                  fontSize: isSub ? '10px' : '11px',
+                  fontSize: isSub ? '20px' : '22px',
                   fontStyle: isSub ? 'italic' : undefined,
                   color: 'var(--vscode-foreground)',
                   overflow: 'hidden',
@@ -184,7 +184,7 @@ export function ToolOverlay({
                     color: 'rgba(255, 255, 255, 0.5)',
                     cursor: 'pointer',
                     padding: '0 2px',
-                    fontSize: '13px',
+                    fontSize: '26px',
                     lineHeight: 1,
                     marginLeft: 2,
                     flexShrink: 0,

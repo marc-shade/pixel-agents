@@ -6,20 +6,18 @@ interface ZoomControlsProps {
 }
 
 const btnBase: React.CSSProperties = {
-  width: 26,
-  height: 26,
-  fontSize: '16px',
-  lineHeight: '16px',
+  width: 40,
+  height: 40,
   padding: 0,
-  background: 'rgba(30, 30, 46, 0.85)',
+  background: '#1e1e2e',
   color: 'rgba(255, 255, 255, 0.8)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  borderRadius: '50%',
+  border: '2px solid #4a4a6a',
+  borderRadius: 0,
   cursor: 'pointer',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  boxShadow: '0 2px 6px rgba(0, 0, 0, 0.4)',
+  boxShadow: '2px 2px 0px #0a0a14',
 }
 
 export function ZoomControls({ zoom, onZoomChange }: ZoomControlsProps) {
@@ -73,12 +71,12 @@ export function ZoomControls({ zoom, onZoomChange }: ZoomControlsProps) {
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 50,
-            background: 'rgba(30, 30, 46, 0.9)',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            borderRadius: 6,
+            background: '#1e1e2e',
+            border: '2px solid #4a4a6a',
+            borderRadius: 0,
             padding: '4px 12px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
-            fontSize: '13px',
+            boxShadow: '2px 2px 0px #0a0a14',
+            fontSize: '26px',
             color: 'rgba(255, 255, 255, 0.8)',
             userSelect: 'none',
             opacity: fadeOut ? 0 : 1,
@@ -115,7 +113,10 @@ export function ZoomControls({ zoom, onZoomChange }: ZoomControlsProps) {
           }}
           title="Zoom in (Ctrl+Scroll)"
         >
-          +
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <line x1="9" y1="3" x2="9" y2="15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            <line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
         </button>
         <button
           onClick={() => onZoomChange(zoom - 1)}
@@ -130,7 +131,9 @@ export function ZoomControls({ zoom, onZoomChange }: ZoomControlsProps) {
           }}
           title="Zoom out (Ctrl+Scroll)"
         >
-          -
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
         </button>
       </div>
     </>

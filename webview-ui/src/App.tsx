@@ -27,11 +27,11 @@ function getOfficeState(): OfficeState {
 
 const actionBarBtnStyle: React.CSSProperties = {
   padding: '4px 10px',
-  fontSize: '11px',
+  fontSize: '22px',
   background: 'rgba(255, 255, 255, 0.08)',
   color: 'rgba(255, 255, 255, 0.7)',
-  border: '1px solid transparent',
-  borderRadius: 3,
+  border: '2px solid transparent',
+  borderRadius: 0,
   cursor: 'pointer',
 }
 
@@ -58,11 +58,11 @@ function EditActionBar({ editor, editorState: es }: { editor: ReturnType<typeof 
         display: 'flex',
         gap: 4,
         alignItems: 'center',
-        background: 'rgba(30, 30, 46, 0.9)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: 6,
+        background: '#1e1e2e',
+        border: '2px solid #4a4a6a',
+        borderRadius: 0,
         padding: '4px 8px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+        boxShadow: '2px 2px 0px #0a0a14',
       }}
     >
       <button
@@ -96,7 +96,7 @@ function EditActionBar({ editor, editorState: es }: { editor: ReturnType<typeof 
         </button>
       ) : (
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
-          <span style={{ fontSize: '11px', color: '#ecc' }}>Reset?</span>
+          <span style={{ fontSize: '22px', color: '#ecc' }}>Reset?</span>
           <button
             style={{ ...actionBarBtnStyle, background: '#a33', color: '#fff' }}
             onClick={() => { setShowResetConfirm(false); editor.handleReset() }}
@@ -239,11 +239,13 @@ function App() {
             left: '50%',
             transform: editor.isDirty ? 'translateX(calc(-50% + 100px))' : 'translateX(-50%)',
             zIndex: 49,
-            background: 'rgba(50, 120, 200, 0.85)',
+            background: '#3278c8',
             color: '#fff',
-            fontSize: '10px',
+            fontSize: '20px',
             padding: '3px 8px',
-            borderRadius: 4,
+            borderRadius: 0,
+            border: '2px solid #5a8cff',
+            boxShadow: '2px 2px 0px #0a0a14',
             pointerEvents: 'none',
             whiteSpace: 'nowrap',
           }}

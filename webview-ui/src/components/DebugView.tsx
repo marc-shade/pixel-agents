@@ -37,7 +37,7 @@ function ToolLine({ tool }: { tool: ToolActivity }) {
   return (
     <span
       style={{
-        fontSize: '11px',
+        fontSize: '22px',
         opacity: tool.done ? 0.5 : 0.8,
         display: 'flex',
         alignItems: 'center',
@@ -68,8 +68,8 @@ export function DebugView({
       <div
         key={id}
         style={{
-          border: `1px solid ${isSelected ? 'var(--vscode-focusBorder, #007fd4)' : 'var(--vscode-widget-border, transparent)'}`,
-          borderRadius: 4,
+          border: `2px solid ${isSelected ? '#5a8cff' : '#4a4a6a'}`,
+          borderRadius: 0,
           padding: '6px 8px',
           background: isSelected ? 'var(--vscode-list-activeSelectionBackground, rgba(255,255,255,0.04))' : undefined,
         }}
@@ -78,11 +78,11 @@ export function DebugView({
           <button
             onClick={() => onSelectAgent(id)}
             style={{
-              borderRadius: '3px 0 0 3px',
+              borderRadius: 0,
               padding: '6px 10px',
-              fontSize: '13px',
-              background: isSelected ? 'var(--vscode-button-background)' : undefined,
-              color: isSelected ? 'var(--vscode-button-foreground)' : undefined,
+              fontSize: '26px',
+              background: isSelected ? 'rgba(90, 140, 255, 0.25)' : undefined,
+              color: isSelected ? '#fff' : undefined,
               fontWeight: isSelected ? 'bold' : undefined,
             }}
           >
@@ -91,12 +91,12 @@ export function DebugView({
           <button
             onClick={() => vscode.postMessage({ type: 'closeAgent', id })}
             style={{
-              borderRadius: '0 3px 3px 0',
+              borderRadius: 0,
               padding: '6px 8px',
-              fontSize: '13px',
+              fontSize: '26px',
               opacity: 0.7,
-              background: isSelected ? 'var(--vscode-button-background)' : undefined,
-              color: isSelected ? 'var(--vscode-button-foreground)' : undefined,
+              background: isSelected ? 'rgba(90, 140, 255, 0.25)' : undefined,
+              color: isSelected ? '#fff' : undefined,
             }}
             title="Close agent"
           >
@@ -130,7 +130,7 @@ export function DebugView({
             {status === 'waiting' && !hasActiveTools && (
               <span
                 style={{
-                  fontSize: '11px',
+                  fontSize: '22px',
                   opacity: 0.85,
                   display: 'flex',
                   alignItems: 'center',
@@ -170,7 +170,7 @@ export function DebugView({
       }}
     >
       {/* Top padding so cards don't overlap the floating toolbar */}
-      <div style={{ padding: '12px 12px 12px', fontSize: '14px' }}>
+      <div style={{ padding: '12px 12px 12px', fontSize: '28px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {agents.map(renderAgentCard)}
         </div>

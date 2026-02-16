@@ -8,11 +8,11 @@ import { getColorizedFloorSprite, getFloorPatternCount, hasFloorSprites } from '
 
 const btnStyle: React.CSSProperties = {
   padding: '3px 8px',
-  fontSize: '11px',
+  fontSize: '22px',
   background: 'rgba(255, 255, 255, 0.08)',
   color: 'rgba(255, 255, 255, 0.7)',
-  border: '1px solid transparent',
-  borderRadius: 3,
+  border: '2px solid transparent',
+  borderRadius: 0,
   cursor: 'pointer',
 }
 
@@ -20,16 +20,16 @@ const activeBtnStyle: React.CSSProperties = {
   ...btnStyle,
   background: 'rgba(90, 140, 255, 0.25)',
   color: 'rgba(255, 255, 255, 0.9)',
-  border: '1px solid rgba(90, 140, 255, 0.4)',
+  border: '2px solid #5a8cff',
 }
 
 const tabStyle: React.CSSProperties = {
   padding: '2px 6px',
-  fontSize: '10px',
+  fontSize: '20px',
   background: 'transparent',
   color: 'rgba(255, 255, 255, 0.5)',
-  border: '1px solid transparent',
-  borderRadius: 2,
+  border: '2px solid transparent',
+  borderRadius: 0,
   cursor: 'pointer',
 }
 
@@ -37,7 +37,7 @@ const activeTabStyle: React.CSSProperties = {
   ...tabStyle,
   background: 'rgba(255, 255, 255, 0.08)',
   color: 'rgba(255, 255, 255, 0.8)',
-  border: '1px solid rgba(90, 140, 255, 0.4)',
+  border: '2px solid #5a8cff',
 }
 
 interface EditorToolbarProps {
@@ -97,8 +97,8 @@ function FloorPatternPreview({ patternIndex, color, selected, onClick }: {
         width: displaySize,
         height: displaySize,
         padding: 0,
-        border: selected ? '2px solid rgba(90, 140, 255, 0.8)' : '1px solid rgba(255, 255, 255, 0.15)',
-        borderRadius: 3,
+        border: selected ? '2px solid #5a8cff' : '2px solid #4a4a6a',
+        borderRadius: 0,
         cursor: 'pointer',
         overflow: 'hidden',
         flexShrink: 0,
@@ -123,7 +123,7 @@ function ColorSlider({ label, value, min, max, onChange }: {
 }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-      <span style={{ fontSize: '10px', color: '#999', width: 14, textAlign: 'right', flexShrink: 0 }}>{label}</span>
+      <span style={{ fontSize: '20px', color: '#999', width: 28, textAlign: 'right', flexShrink: 0 }}>{label}</span>
       <input
         type="range"
         min={min}
@@ -132,7 +132,7 @@ function ColorSlider({ label, value, min, max, onChange }: {
         onChange={(e) => onChange(Number(e.target.value))}
         style={{ flex: 1, height: 12, accentColor: 'rgba(90, 140, 255, 0.8)' }}
       />
-      <span style={{ fontSize: '10px', color: '#999', width: 28, textAlign: 'right', flexShrink: 0 }}>{value}</span>
+      <span style={{ fontSize: '20px', color: '#999', width: 48, textAlign: 'right', flexShrink: 0 }}>{value}</span>
     </div>
   )
 }
@@ -213,17 +213,17 @@ export function EditorToolbar({
     <div
       style={{
         position: 'absolute',
-        bottom: 48,
+        bottom: 68,
         left: 10,
         zIndex: 50,
-        background: 'rgba(30, 30, 46, 0.9)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        borderRadius: 6,
+        background: '#1e1e2e',
+        border: '2px solid #4a4a6a',
+        borderRadius: 0,
         padding: '6px 8px',
         display: 'flex',
         flexDirection: 'column-reverse',
         gap: 6,
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+        boxShadow: '2px 2px 0px #0a0a14',
         maxWidth: 'calc(100vw - 20px)',
       }}
     >
@@ -280,9 +280,9 @@ export function EditorToolbar({
               flexDirection: 'column',
               gap: 3,
               padding: '4px 6px',
-              background: 'rgba(20,20,36,0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
+              background: '#181828',
+              border: '2px solid #4a4a6a',
+              borderRadius: 0,
             }}>
               <ColorSlider label="H" value={floorColor.h} min={0} max={360} onChange={(v) => handleColorChange('h', v)} />
               <ColorSlider label="S" value={floorColor.s} min={0} max={100} onChange={(v) => handleColorChange('s', v)} />
@@ -327,9 +327,9 @@ export function EditorToolbar({
               flexDirection: 'column',
               gap: 3,
               padding: '4px 6px',
-              background: 'rgba(20,20,36,0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
+              background: '#181828',
+              border: '2px solid #4a4a6a',
+              borderRadius: 0,
             }}>
               <ColorSlider label="H" value={wallColor.h} min={0} max={360} onChange={(v) => handleWallColorChange('h', v)} />
               <ColorSlider label="S" value={wallColor.s} min={0} max={100} onChange={(v) => handleWallColorChange('s', v)} />
@@ -378,8 +378,8 @@ export function EditorToolbar({
                     width: thumbSize,
                     height: thumbSize,
                     background: '#2A2A3A',
-                    border: isSelected ? '2px solid rgba(90, 140, 255, 0.8)' : '1px solid rgba(255, 255, 255, 0.15)',
-                    borderRadius: 3,
+                    border: isSelected ? '2px solid #5a8cff' : '2px solid #4a4a6a',
+                    borderRadius: 0,
                     cursor: 'pointer',
                     padding: 0,
                     display: 'flex',
@@ -425,7 +425,7 @@ export function EditorToolbar({
             </button>
             {selectedFurnitureColor && (
               <button
-                style={{ ...btnStyle, fontSize: '10px', padding: '2px 6px' }}
+                style={{ ...btnStyle, fontSize: '20px', padding: '2px 6px' }}
                 onClick={() => onSelectedFurnitureColorChange(null)}
                 title="Remove color (restore original)"
               >
@@ -439,9 +439,9 @@ export function EditorToolbar({
               flexDirection: 'column',
               gap: 3,
               padding: '4px 6px',
-              background: 'rgba(20,20,36,0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 3,
+              background: '#181828',
+              border: '2px solid #4a4a6a',
+              borderRadius: 0,
             }}>
               {effectiveColor.colorize ? (
                 <>
@@ -456,7 +456,7 @@ export function EditorToolbar({
               )}
               <ColorSlider label="B" value={effectiveColor.b} min={-100} max={100} onChange={(v) => handleSelFurnColorChange('b', v)} />
               <ColorSlider label="C" value={effectiveColor.c} min={-100} max={100} onChange={(v) => handleSelFurnColorChange('c', v)} />
-              <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '10px', color: '#999', cursor: 'pointer' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '20px', color: '#999', cursor: 'pointer' }}>
                 <input
                   type="checkbox"
                   checked={!!effectiveColor.colorize}

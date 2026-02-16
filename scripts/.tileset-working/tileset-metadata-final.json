@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "timestamp": "2026-02-15T00:02:59.502Z",
+  "timestamp": "2026-02-15T01:34:46.273Z",
   "sourceFile": "assets/office_tileset_16x16.png",
   "tileset": {
     "width": 256,
@@ -1092,7 +1092,7 @@
       "paddedHeight": 32,
       "name": "TELEPHONE",
       "label": "Telephone",
-      "category": "wall",
+      "category": "electronics",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -1112,7 +1112,7 @@
       "paddedHeight": 32,
       "name": "WINDOW_DOUBLE_WOOD",
       "label": "Double Pane Wood Window",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -1132,7 +1132,7 @@
       "paddedHeight": 32,
       "name": "WINDOW_DOUBLE_WHITE",
       "label": "Double Window White",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -1152,7 +1152,7 @@
       "paddedHeight": 32,
       "name": "WINDOW_DOUBLE_WHITE_2",
       "label": "White Double Window",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -1216,8 +1216,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "MONITOR",
-      "orientation": "front",
-      "state": "off",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1236,8 +1234,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "MONITOR",
-      "orientation": "front",
-      "state": "on",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1268,7 +1264,7 @@
       "paddedHeight": 32,
       "name": "CLOCK_WALL_COLOR",
       "label": "Colorful Wall Clock",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -1306,8 +1302,8 @@
       "paddedY": 360,
       "paddedWidth": 16,
       "paddedHeight": 16,
-      "name": "CRT_MONITOR_FRONT_OFF",
-      "label": "CRT Monitor - Front - Off",
+      "name": "MONITOR_CRT_OFF",
+      "label": "CRT Monitor - Off",
       "category": "electronics",
       "footprintW": 1,
       "footprintH": 1,
@@ -1316,8 +1312,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "CRT_MONITOR",
-      "orientation": "front",
-      "state": "off",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1336,8 +1330,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "COMPUTER",
-      "orientation": "front",
-      "state": "off",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1346,8 +1338,8 @@
       "paddedY": 360,
       "paddedWidth": 16,
       "paddedHeight": 16,
-      "name": "CRT_MONITOR_FRONT_ON",
-      "label": "CRT Monitor - Front - On",
+      "name": "MONITOR_CRT_ON",
+      "label": "CRT Monitor - On",
       "category": "electronics",
       "footprintW": 1,
       "footprintH": 1,
@@ -1356,8 +1348,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "CRT_MONITOR",
-      "orientation": "front",
-      "state": "on",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1376,8 +1366,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "COMPUTER",
-      "orientation": "front",
-      "state": "on",
       "canPlaceOnSurfaces": true
     },
     {
@@ -1388,7 +1376,7 @@
       "paddedHeight": 32,
       "name": "WOOD_WINDOW_SM",
       "label": "Small Wooden Window",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -1408,7 +1396,7 @@
       "paddedHeight": 32,
       "name": "WHITE_WINDOW_SM",
       "label": "Small White Window",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -1428,7 +1416,7 @@
       "paddedHeight": 32,
       "name": "WHITE_WINDOW_SM_2",
       "label": "Small White Window",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -1446,8 +1434,8 @@
       "paddedY": 352,
       "paddedWidth": 32,
       "paddedHeight": 32,
-      "name": "FULL_COMPUTER_COFFEE_FRONT_OFF",
-      "label": "Full Computer with Coffee - Front - Off",
+      "name": "FULL_COMPUTER_COFFE_OFF",
+      "label": "Full Computer with Coffee",
       "category": "electronics",
       "footprintW": 2,
       "footprintH": 2,
@@ -1455,11 +1443,10 @@
       "colorEditable": false,
       "discard": false,
       "partOfGroup": true,
-      "groupId": "FULL_COMPUTER_COFFEE",
+      "groupId": "FULL_COMPUTER_COFFE",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "off"
+      "orientation": "front"
     },
     {
       "id": "ASSET_92",
@@ -1467,8 +1454,8 @@
       "paddedY": 352,
       "paddedWidth": 32,
       "paddedHeight": 32,
-      "name": "FULL_COMPUTER_COFFEE_FRONT_ON",
-      "label": "Full Computer with Coffee - Front - On",
+      "name": "FULL_COMPUTER_COFFE_ON",
+      "label": "Full Computer with Coffee",
       "category": "electronics",
       "footprintW": 2,
       "footprintH": 2,
@@ -1476,11 +1463,10 @@
       "colorEditable": false,
       "discard": false,
       "partOfGroup": true,
-      "groupId": "FULL_COMPUTER_COFFEE",
-      "canPlaceOnSurfaces": true,
+      "groupId": "FULL_COMPUTER_COFFE",
+      "canPlaceOnSurfaces": false,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "on"
+      "orientation": "front"
     },
     {
       "id": "ASSET_94",
@@ -1488,8 +1474,8 @@
       "paddedY": 353,
       "paddedWidth": 32,
       "paddedHeight": 32,
-      "name": "FULL_COMPUTER_FRONT_OFF",
-      "label": "Full Computer - Front - Off",
+      "name": "FULL_COMPUTER_OFF",
+      "label": "Full Computer - Off",
       "category": "electronics",
       "footprintW": 2,
       "footprintH": 2,
@@ -1500,8 +1486,7 @@
       "groupId": "FULL_COMPUTER",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "off"
+      "orientation": "front"
     },
     {
       "id": "ASSET_95",
@@ -1509,8 +1494,8 @@
       "paddedY": 353,
       "paddedWidth": 32,
       "paddedHeight": 32,
-      "name": "FULL_COMPUTER_FRONT_ON",
-      "label": "Full Computer - Front - On",
+      "name": "FULL_COMPUTER_ON",
+      "label": "Full Computer - On",
       "category": "electronics",
       "footprintW": 2,
       "footprintH": 2,
@@ -1521,8 +1506,7 @@
       "groupId": "FULL_COMPUTER",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "on"
+      "orientation": "front"
     },
     {
       "id": "ASSET_98",
@@ -2328,7 +2312,7 @@
       "groupId": "LAPTOP",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "right"
+      "orientation": "front"
     },
     {
       "id": "ASSET_99",
@@ -2658,7 +2642,7 @@
       "groupId": "LAPTOP",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "left"
+      "orientation": "front"
     },
     {
       "id": "ASSET_100",
@@ -2786,8 +2770,7 @@
       "groupId": "LAPTOP",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "off"
+      "orientation": "front"
     },
     {
       "id": "ASSET_108",
@@ -2833,8 +2816,7 @@
       "groupId": "LAPTOP",
       "canPlaceOnSurfaces": true,
       "backgroundTiles": 1,
-      "orientation": "front",
-      "state": "on"
+      "orientation": "front"
     },
     {
       "id": "ASSET_110",
@@ -2870,7 +2852,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "LAPTOP",
-      "orientation": "back",
       "canPlaceOnSurfaces": true
     },
     {
@@ -2881,7 +2862,7 @@
       "paddedHeight": 32,
       "name": "PAINTING_LANDSCAPE",
       "label": "Landscape Painting",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -2901,7 +2882,7 @@
       "paddedHeight": 32,
       "name": "PAINTING_LANDSCAPE_2",
       "label": "Landscape Painting",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -2921,7 +2902,7 @@
       "paddedHeight": 32,
       "name": "PAINTING_SM",
       "label": "Small Painting",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -2941,7 +2922,7 @@
       "paddedHeight": 32,
       "name": "PAINTING_SM_2",
       "label": "Small Painting",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -2961,7 +2942,7 @@
       "paddedHeight": 32,
       "name": "PAINTING_SM_3",
       "label": "Small Painting",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -2981,7 +2962,7 @@
       "paddedHeight": 32,
       "name": "TEXT_FRAME",
       "label": "Framed Text",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 1,
       "footprintH": 2,
       "isDesk": false,
@@ -3001,7 +2982,7 @@
       "paddedHeight": 32,
       "name": "CHALKBOARD_WALL_SM",
       "label": "Small Wall Chalkboard",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -3021,7 +3002,7 @@
       "paddedHeight": 32,
       "name": "CHART_SM_1",
       "label": "Small Chart",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -3143,7 +3124,7 @@
       ],
       "name": "CHART_SM_2",
       "label": "Small Chart",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -3164,7 +3145,7 @@
       "erasedPixels": [],
       "name": "CHART_1",
       "label": "Chart",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -3182,7 +3163,7 @@
       "paddedY": 416,
       "paddedWidth": 16,
       "paddedHeight": 16,
-      "name": "CRT_MONITOR_BACK",
+      "name": "MONITOR_CRT_BACK",
       "label": "CRT Monitor - Back",
       "category": "electronics",
       "footprintW": 1,
@@ -3192,7 +3173,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "CRT_MONITOR",
-      "orientation": "back",
       "canPlaceOnSurfaces": true
     },
     {
@@ -3203,7 +3183,7 @@
       "paddedHeight": 16,
       "name": "COMPUTER_BACK",
       "label": "Computer - Back",
-      "category": "electronics",
+      "category": "storage",
       "footprintW": 2,
       "footprintH": 1,
       "isDesk": false,
@@ -3211,7 +3191,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "COMPUTER",
-      "orientation": "back",
       "canPlaceOnSurfaces": true
     },
     {
@@ -3230,7 +3209,6 @@
       "discard": false,
       "partOfGroup": true,
       "groupId": "MONITOR",
-      "orientation": "back",
       "canPlaceOnSurfaces": false
     },
     {
@@ -3248,7 +3226,7 @@
       "colorEditable": false,
       "discard": false,
       "partOfGroup": false,
-      "groupId": null,
+      "groupId": "PC",
       "canPlaceOnSurfaces": true
     },
     {
@@ -3514,7 +3492,7 @@
       ],
       "name": "CHART_2",
       "label": "Chart",
-      "category": "wall",
+      "category": "decor",
       "footprintW": 2,
       "footprintH": 2,
       "isDesk": false,
@@ -4049,6 +4027,86 @@
       "partOfGroup": false,
       "groupId": null,
       "backgroundTiles": 1
+    },
+    {
+      "id": "ASSET_NEW_108",
+      "paddedX": 16,
+      "paddedY": 608,
+      "paddedWidth": 32,
+      "paddedHeight": 16,
+      "name": "CHAIR_CUSHIONED_LG_FRONT",
+      "label": "Large Cushioned Chair",
+      "category": "chairs",
+      "footprintW": 2,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false,
+      "discard": false,
+      "backgroundTiles": 0,
+      "canPlaceOnSurfaces": false,
+      "partOfGroup": true,
+      "groupId": "CUSHIONED_CHAIR_LG",
+      "orientation": "front"
+    },
+    {
+      "id": "ASSET_NEW_109",
+      "paddedX": 48,
+      "paddedY": 608,
+      "paddedWidth": 32,
+      "paddedHeight": 16,
+      "name": "CHAIR_CUSHIONED_LG_BACK",
+      "label": "Large Cushioned Chair",
+      "category": "chairs",
+      "footprintW": 2,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false,
+      "discard": false,
+      "backgroundTiles": 0,
+      "canPlaceOnSurfaces": false,
+      "partOfGroup": true,
+      "groupId": "CUSHIONED_CHAIR_LG",
+      "orientation": "back"
+    },
+    {
+      "id": "ASSET_NEW_110",
+      "paddedX": 16,
+      "paddedY": 624,
+      "paddedWidth": 16,
+      "paddedHeight": 32,
+      "name": "CHAIR_CUSHIONED_LG_RIGHT",
+      "label": "Large Cushioned Chair",
+      "category": "chairs",
+      "footprintW": 1,
+      "footprintH": 2,
+      "isDesk": false,
+      "canPlaceOnWalls": false,
+      "discard": false,
+      "backgroundTiles": 0,
+      "canPlaceOnSurfaces": false,
+      "partOfGroup": true,
+      "groupId": "CUSHIONED_CHAIR_LG",
+      "orientation": "right"
+    },
+    {
+      "id": "ASSET_NEW_111",
+      "paddedX": 32,
+      "paddedY": 624,
+      "paddedWidth": 16,
+      "paddedHeight": 32,
+      "name": "CHAIR_CUSHIONED_LG_LEFT",
+      "label": "Large Cushioned Chair",
+      "category": "chairs",
+      "footprintW": 1,
+      "footprintH": 2,
+      "isDesk": false,
+      "canPlaceOnWalls": false,
+      "discard": false,
+      "backgroundTiles": 0,
+      "canPlaceOnSurfaces": false,
+      "partOfGroup": true,
+      "groupId": "CUSHIONED_CHAIR_LG",
+      "orientation": "left"
     }
   ]
 }

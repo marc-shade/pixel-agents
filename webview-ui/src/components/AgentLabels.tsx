@@ -108,7 +108,7 @@ export function AgentLabels({
             )}
             <span
               style={{
-                fontSize: isSub ? '8px' : '9px',
+                fontSize: isSub ? '16px' : '18px',
                 fontStyle: isSub ? 'italic' : undefined,
                 color: 'var(--vscode-foreground)',
                 background: 'rgba(30,30,46,0.7)',

@@ -17,34 +17,34 @@ const panelStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 4,
-  background: 'rgba(30, 30, 46, 0.9)',
-  border: '1px solid rgba(255, 255, 255, 0.1)',
-  borderRadius: 6,
+  background: '#1e1e2e',
+  border: '2px solid #4a4a6a',
+  borderRadius: 0,
   padding: '4px 6px',
-  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.4)',
+  boxShadow: '2px 2px 0px #0a0a14',
 }
 
 const btnBase: React.CSSProperties = {
   padding: '5px 10px',
-  fontSize: '12px',
+  fontSize: '24px',
   color: 'rgba(255, 255, 255, 0.8)',
   background: 'rgba(255, 255, 255, 0.08)',
-  border: 'none',
-  borderRadius: 4,
+  border: '2px solid transparent',
+  borderRadius: 0,
   cursor: 'pointer',
 }
 
 const btnActive: React.CSSProperties = {
   ...btnBase,
   background: 'rgba(90, 140, 255, 0.25)',
-  border: '1px solid rgba(90, 140, 255, 0.4)',
+  border: '2px solid #5a8cff',
 }
 
 const gearBase: React.CSSProperties = {
   ...btnBase,
   padding: '5px 8px',
-  fontSize: '14px',
-  lineHeight: '14px',
+  fontSize: '28px',
+  lineHeight: '28px',
 }
 
 export function BottomToolbar({
@@ -70,7 +70,7 @@ export function BottomToolbar({
             hovered === 'agent'
               ? 'rgba(90, 200, 140, 0.3)'
               : 'rgba(90, 200, 140, 0.15)',
-          border: '1px solid rgba(90, 200, 140, 0.35)',
+          border: '2px solid #5ac88c',
           color: 'rgba(200, 255, 220, 0.95)',
         }}
       >
@@ -105,7 +105,7 @@ export function BottomToolbar({
                 : hovered === 'gear'
                   ? 'rgba(255, 255, 255, 0.15)'
                   : gearBase.background,
-            border: isSettingsOpen ? '1px solid rgba(90, 140, 255, 0.4)' : 'none',
+            border: isSettingsOpen ? '2px solid #5a8cff' : '2px solid transparent',
           }}
           title="Settings"
         >
