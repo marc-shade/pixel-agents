@@ -9,12 +9,18 @@ interface BottomToolbarProps {
   onToggleDebugMode: () => void
 }
 
-const panelStyle: React.CSSProperties = {
+const wrapperStyle: React.CSSProperties = {
   position: 'absolute',
   bottom: 32,
-  left: '50%',
-  transform: 'translateX(-50%)',
+  left: 0,
+  right: 0,
   zIndex: 'var(--pixel-controls-z)',
+  display: 'flex',
+  justifyContent: 'center',
+  pointerEvents: 'none',
+}
+
+const panelStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: 4,
@@ -23,6 +29,7 @@ const panelStyle: React.CSSProperties = {
   borderRadius: 0,
   padding: '4px 6px',
   boxShadow: 'var(--pixel-shadow)',
+  pointerEvents: 'auto',
 }
 
 const btnBase: React.CSSProperties = {
@@ -53,6 +60,7 @@ export function BottomToolbar({
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
   return (
+    <div style={wrapperStyle}>
     <div style={panelStyle}>
       <button
         onClick={onOpenClaude}
@@ -111,6 +119,7 @@ export function BottomToolbar({
           onToggleDebugMode={onToggleDebugMode}
         />
       </div>
+    </div>
     </div>
   )
 }
