@@ -506,6 +506,23 @@ export function renderBubbles(
     ctx.drawImage(cached, bubbleX, bubbleY)
     ctx.restore()
   }
+
+  // Sleep "Zzz" for sleeping pets
+  const sleepNow = performance.now()
+  for (const ch of characters) {
+    if (ch.state !== CharacterState.SLEEP) continue
+    // Bobbing vertical offset (2px amplitude)
+    const bob = Math.sin(sleepNow / 600) * 2 * zoom
+    const zX = Math.round(offsetX + ch.x * zoom + 4 * zoom)
+    const zY = Math.round(offsetY + (ch.y - 20) * zoom + bob)
+    const fontSize = Math.max(8, Math.round(10 * zoom))
+    ctx.save()
+    ctx.font = `bold ${fontSize}px monospace`
+    ctx.fillStyle = '#aaccff'
+    ctx.globalAlpha = 0.85
+    ctx.fillText('Zzz', zX, zY)
+    ctx.restore()
+  }
 }
 
 export interface ButtonBounds {
