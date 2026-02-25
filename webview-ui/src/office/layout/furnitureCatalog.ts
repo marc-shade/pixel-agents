@@ -235,10 +235,27 @@ export function buildDynamicCatalog(assets: LoadedAssetData): boolean {
   return true
 }
 
+// Maps legacy layout type names (uppercase enum values / old IDs) to loaded asset IDs
+const TYPE_ALIASES: Record<string, string> = {
+  'DESK': 'desk-cyber', 'desk': 'desk-cyber',
+  'CHAIR': 'chair-cyber', 'chair': 'chair-cyber',
+  'PLANT': 'plant-neon', 'plant': 'plant-neon',
+  'BOOKSHELF': 'bookshelf', 'bookshelf': 'bookshelf',
+  'COOLER': 'coffee-machine', 'cooler': 'coffee-machine',
+  'WHITEBOARD': 'monitor-wall', 'whiteboard': 'monitor-wall',
+  'COUCH': 'couch-cyber',
+  'PC': 'desk-cyber', 'pc': 'desk-cyber',
+  'LAMP': 'plant-neon', 'lamp': 'plant-neon',
+}
+
 export function getCatalogEntry(type: string): CatalogEntryWithCategory | undefined {
   // Check internal catalog first (includes all variants, e.g., non-front rotations)
   if (internalCatalog) {
-    return internalCatalog.find((e) => e.type === type)
+    const direct = internalCatalog.find((e) => e.type === type)
+    if (direct) return direct
+    // Fall back to alias for legacy layout type names
+    const alias = TYPE_ALIASES[type]
+    if (alias) return internalCatalog.find((e) => e.type === alias)
   }
   const catalog = dynamicCatalog || FURNITURE_CATALOG
   return catalog.find((e) => e.type === type)
