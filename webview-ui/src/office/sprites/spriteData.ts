@@ -1259,18 +1259,18 @@ const CORGI_UP_STAND: SpriteData = [
 
 const CORGI_RIGHT_STAND: SpriteData = [
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
   [_,_,_,_,_,_,_,_,_,_,_,corL,corL,_,_,_],
   [_,_,_,_,_,_,_,_,_,corL,corP,corO,corL,_,_,_],
   [_,_,_,_,_,_,_,_,corL,corO,corO,corO,corL,_,_,_],
   [_,_,_,_,_,_,_,corL,corO,corW,corE,corO,corL,_,_,_],
-  [_,_,_,_,_,_,_,corL,corW,corW,corN,corL,_,_,_,_],
-  [_,_,_,_,_,corL,corO,corO,corO,corO,corL,_,_,_,_,_],
-  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corL,_,_,_,_,_],
-  [_,_,corL,corL,corO,corW,corW,corW,corO,corO,corL,_,_,_,_,_],
-  [_,_,_,_,corL,corO,corO,corO,corO,corL,_,_,_,_,_,_],
-  [_,_,_,_,_,corL,corO,_,corO,corL,_,_,_,_,_,_],
-  [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
-  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,corL,corL,_,_,_,_,corL,corW,corW,corN,corL,_,_,_,_],
+  [_,corL,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_,_],
+  [corL,corO,corO,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [corL,corO,corW,corW,corW,corW,corW,corW,corO,corO,corO,corL,_,_,_,_],
+  [_,corL,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_,_],
+  [_,_,corL,corO,_,_,_,_,_,corO,corL,_,_,_,_,_],
+  [_,_,_,corL,_,_,_,_,_,_,corL,_,_,_,_,_],
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
@@ -1390,15 +1390,15 @@ export function getPetSprites(petType: string): CharacterSprites {
         [_,_,_,_,_,corO,corL,_,_,corL,corO,_,_,_,_,_],
         [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
       ],
-      // right legs A
+      // right legs A (stride out — back leg reaches back, front leg forward)
       [
-        [_,_,_,_,_,corL,corO,_,corO,corL,_,_,_,_,_,_],
-        [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
+        [_,corL,corO,_,_,_,_,_,_,_,corO,corL,_,_,_,_],
+        [_,_,corL,_,_,_,_,_,_,_,_,corL,_,_,_,_],
       ],
-      // right legs B
+      // right legs B (stride in — legs come together)
       [
-        [_,_,_,_,corL,corO,_,_,_,corO,corL,_,_,_,_,_],
-        [_,_,_,_,_,corL,_,_,_,_,corL,_,_,_,_,_],
+        [_,_,_,corO,corL,_,_,_,corL,corO,_,_,_,_,_,_],
+        [_,_,_,_,corL,_,_,_,_,corL,_,_,_,_,_,_],
       ],
     )
   }
