@@ -1,6 +1,10 @@
-# Pixel Agents — Compressed Reference
+# CLAUDE.md
 
-VS Code extension with embedded React webview: pixel art office where AI agents (Claude Code terminals) are animated characters.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+VS Code extension with embedded React webview: pixel art office where AI agents (Claude Code terminals) are animated characters. Also runs as a standalone HTTP+WebSocket server for cluster monitoring.
 
 ## Architecture
 
@@ -56,6 +60,14 @@ webview-ui/src/               — React + TypeScript (Vite)
     components/
       OfficeCanvas.tsx        — Canvas, resize, DPR, mouse hit-testing, edit interactions, drag-to-move
       ToolOverlay.tsx          — Activity status label above hovered/selected character + close button
+
+server/                       — Standalone HTTP+WS server (no VS Code dependency)
+  index.ts                    — Main: HTTP static server + WebSocket, session scanning, remote SSH agents
+  vscode-shim.ts              — Stub 'vscode' module so shared src/ code compiles outside VS Code
+  sessionScanner.ts           — Finds active Claude JSONL sessions across local + remote cluster nodes
+  remoteWatcher.ts            — SSH tail -f streaming for remote agent JSONL files
+  arcLabMonitor.ts            — ARC-AGI-3 lab status polling
+  esbuild.mjs                 — Server build: bundles to dist/server.js with vscode alias
 
 scripts/                      — 7-stage asset extraction pipeline
   0-import-tileset.ts         — Interactive CLI wrapper
@@ -173,9 +185,36 @@ Toggle via "Layout" button. Tools: SELECT (default), Floor paint, Wall paint, Er
 ## Build & Dev
 
 ```sh
-npm install && cd webview-ui && npm install && cd .. && npm run build
+# First-time setup
+npm install && cd webview-ui && npm install && cd ..
+
+# Full build (type-check → lint → esbuild extension → vite webview)
+npm run build
+
+# Watch mode (extension esbuild + tsc --watch in parallel, but NOT webview)
+npm run watch
+# After webview changes, rebuild separately:
+npm run build:webview
+
+# Type-check only
+npm run check-types
+
+# Lint (extension only — webview has separate eslint config)
+npm run lint
+
+# Standalone server (HTTP+WS, no VS Code needed)
+npm run build:standalone && npm run start
+# Or: npm run start (builds then runs on http://127.0.0.1:3777)
+
+# Package for marketplace
+npm run package
 ```
-Build: type-check → lint → esbuild (extension) → vite (webview). F5 for Extension Dev Host.
+
+**VS Code extension**: F5 launches Extension Development Host. After rebuild, reload extension via the reload button in the dev host.
+
+**Standalone server**: `server/index.ts` runs outside VS Code. Uses `vscode-shim.ts` to alias the `vscode` module. Scans for active Claude sessions locally and via SSH on cluster nodes. Serves the webview UI at port 3777 (configurable via `PIXEL_AGENTS_PORT`).
+
+**No test suite**: This project has no automated tests. Verify changes by running `npm run build` (catches type errors + lint) and testing manually in the Extension Dev Host.
 
 ## TypeScript Constraints
 
@@ -210,4 +249,6 @@ All magic numbers and strings are centralized — never add inline constants to 
 
 - `WebviewViewProvider` (not `WebviewPanel`) — lives in panel area alongside terminal
 - Inline esbuild problem matcher (no extra extension needed)
-- Webview is separate Vite project with own `node_modules`/`tsconfig`
+- Webview is separate Vite project with own `node_modules`/`tsconfig` — must `cd webview-ui && npm install` separately
+- Standalone server reuses `src/` modules by aliasing `vscode` → `server/vscode-shim.ts` at build time
+- Office tileset (`webview-ui/public/assets/`) is a paid third-party asset not committed to the repo — extension works without it (basic sprites only). Import via `npm run import-tileset`
