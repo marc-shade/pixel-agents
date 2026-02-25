@@ -1,0 +1,15 @@
+#!/bin/bash
+# pixel-agents — Standalone pixel art command center for Claude Code agents
+# Watches local and remote Claude Code sessions across the cluster.
+
+set -e
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Build if needed
+if [ ! -f "$DIR/dist/server.js" ] || [ ! -f "$DIR/dist/webview/index.html" ]; then
+	echo "Building pixel-agents..."
+	cd "$DIR"
+	npm run build:standalone
+fi
+
+exec node "$DIR/dist/server.js" "$@"

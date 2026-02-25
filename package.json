@@ -51,6 +51,9 @@
   "scripts": {
     "vscode:prepublish": "npm run package",
     "build:webview": "cd webview-ui && npm run build",
+    "build:server": "node server/esbuild.mjs",
+    "build:standalone": "npm run build:webview && npm run build:server",
+    "start": "npm run build:standalone && node dist/server.js",
     "compile": "npm run check-types && npm run lint && node esbuild.js && npm run build:webview",
     "build": "npm run compile",
     "watch": "npm-run-all -p watch:*",
@@ -60,6 +63,9 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint src",
     "import-tileset": "tsx scripts/import-tileset-cli.ts"
+  },
+  "dependencies": {
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@anthropic-ai/sdk": "^0.74.0",
