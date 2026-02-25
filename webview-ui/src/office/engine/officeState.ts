@@ -1,4 +1,5 @@
 import { TILE_SIZE, MATRIX_EFFECT_DURATION, CharacterState, Direction } from '../types.js'
+import type { InterestPoint } from '../types.js'
 import {
   PALETTE_COUNT,
   HUE_SHIFT_MIN_DEG,
@@ -33,6 +34,7 @@ export class OfficeState {
   blockedTiles: Set<string>
   furniture: FurnitureInstance[]
   walkableTiles: Array<{ col: number; row: number }>
+  interestPoints: InterestPoint[]
   characters: Map<number, Character> = new Map()
   selectedAgentId: number | null = null
   cameraFollowId: number | null = null
@@ -51,6 +53,7 @@ export class OfficeState {
     this.blockedTiles = getBlockedTiles(this.layout.furniture)
     this.furniture = layoutToFurnitureInstances(this.layout.furniture)
     this.walkableTiles = getWalkableTiles(this.tileMap, this.blockedTiles)
+    this.interestPoints = this.extractInterestPoints()
   }
 
   /** Rebuild all derived state from a new layout. Reassigns existing characters.
@@ -62,6 +65,7 @@ export class OfficeState {
     this.blockedTiles = getBlockedTiles(layout.furniture)
     this.rebuildFurnitureInstances()
     this.walkableTiles = getWalkableTiles(this.tileMap, this.blockedTiles)
+    this.interestPoints = this.extractInterestPoints()
 
     // Shift character positions when grid expands left/up
     if (shift && (shift.col !== 0 || shift.row !== 0)) {
@@ -136,6 +140,30 @@ export class OfficeState {
     ch.y = spawn.row * TILE_SIZE + TILE_SIZE / 2
     ch.path = []
     ch.moveProgress = 0
+  }
+
+  /** Extract walkable tiles adjacent to coffee machines as interest points */
+  private extractInterestPoints(): InterestPoint[] {
+    const points: InterestPoint[] = []
+    for (const item of this.layout.furniture) {
+      if (item.type !== 'coffee-machine') continue
+      const entry = getCatalogEntry(item.type)
+      if (!entry) continue
+      // Find walkable tile adjacent to the coffee machine
+      const neighbors = [
+        { col: item.col, row: item.row - 1, dir: Direction.DOWN },
+        { col: item.col, row: item.row + entry.footprintH, dir: Direction.UP },
+        { col: item.col - 1, row: item.row, dir: Direction.RIGHT },
+        { col: item.col + entry.footprintW, row: item.row, dir: Direction.LEFT },
+      ]
+      for (const n of neighbors) {
+        if (isWalkable(n.col, n.row, this.tileMap, this.blockedTiles)) {
+          points.push(n)
+          break
+        }
+      }
+    }
+    return points
   }
 
   getLayout(): OfficeLayout {
@@ -671,7 +699,7 @@ export class OfficeState {
 
       // Temporarily unblock own seat so character can pathfind to it
       this.withOwnSeatUnblocked(ch, () =>
-        updateCharacter(ch, dt, this.walkableTiles, this.seats, this.tileMap, this.blockedTiles)
+        updateCharacter(ch, dt, this.walkableTiles, this.seats, this.tileMap, this.blockedTiles, this.interestPoints)
       )
 
       // Tick bubble timer for waiting bubbles

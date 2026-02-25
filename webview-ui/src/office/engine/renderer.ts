@@ -40,6 +40,14 @@ import {
   ROTATE_BUTTON_BG,
 } from '../../constants.js'
 
+// ── Module-level ARC lab data (set by OfficeCanvas before each frame) ──
+
+let currentArcData: ArcLabHUDData | null = null
+
+export function setArcLabData(data: ArcLabHUDData | null): void {
+  currentArcData = data
+}
+
 // ── Render functions ────────────────────────────────────────────
 
 export function renderTileGrid(
@@ -117,26 +125,37 @@ export function renderScene(
       zY: f.zY,
       draw: (c) => {
         c.drawImage(cached, fx, fy)
-        // Blinking LEDs on server racks
+        // Blinking LEDs on server racks — color driven by ARC lab health
         if (isServerRack) {
           const ledSize = Math.max(1, Math.round(2 * zoom))
           const spriteW = f.sprite[0]?.length ?? 16
           const spriteH = f.sprite.length
-          // Draw 3 LEDs at different vertical positions on the rack face
+          const arcHealth = currentArcData?.health
+          const healthyCount = arcHealth
+            ? [arcHealth.apiServer, arcHealth.webSocket, arcHealth.orchestrator, arcHealth.reactor].filter(Boolean).length
+            : 0
           const ledPositions = [
-            { row: Math.round(spriteH * 0.25), phase: 0 },
-            { row: Math.round(spriteH * 0.45), phase: 1.2 },
-            { row: Math.round(spriteH * 0.65), phase: 2.4 },
+            { row: Math.round(spriteH * 0.25), phase: 0, service: arcHealth?.apiServer },
+            { row: Math.round(spriteH * 0.45), phase: 1.2, service: arcHealth?.webSocket },
+            { row: Math.round(spriteH * 0.65), phase: 2.4, service: arcHealth?.orchestrator },
           ]
           for (const led of ledPositions) {
-            // Each LED blinks at a different rate/phase
             const t = (now + led.phase * 700) / 800
             const blink = Math.sin(t) > 0
-            const color = blink ? '#00ff88' : '#ff3344'
+            let color: string
+            if (arcHealth) {
+              // Green if service is up, red if down, amber if partial
+              color = led.service ? (blink ? '#00ff88' : '#008844') : (blink ? '#ff3344' : '#881122')
+            } else {
+              color = blink ? '#00ff88' : '#ff3344'
+            }
             c.fillStyle = color
+            c.shadowColor = color
+            c.shadowBlur = healthyCount >= 3 ? 3 * zoom : 0
             const lx = fx + Math.round((spriteW * 0.65) * zoom)
             const ly = fy + Math.round(led.row * zoom)
             c.fillRect(lx, ly, ledSize, ledSize)
+            c.shadowBlur = 0
           }
         }
       },
@@ -962,6 +981,155 @@ export function renderArcLabHUD(
 
     ctx.restore()
   }
+}
+
+// ── Mini-map ────────────────────────────────────────────────────
+
+const MINIMAP_ROOM_COLORS: Array<{ color: string; minCol: number; maxCol: number; minRow: number; maxRow: number }> = [
+  { color: '#00e5ff', minCol: 0, maxCol: 19, minRow: 0, maxRow: 11 },   // mac-studio
+  { color: '#66ff66', minCol: 22, maxCol: 41, minRow: 0, maxRow: 11 },  // macbook-air
+  { color: '#ff44ff', minCol: 0, maxCol: 19, minRow: 14, maxRow: 25 },  // macmini
+  { color: '#ff8844', minCol: 22, maxCol: 41, minRow: 14, maxRow: 25 }, // macpro51
+]
+
+export function renderMiniMap(
+  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  characters: Character[],
+  cols: number,
+  rows: number,
+  offsetX: number,
+  offsetY: number,
+  zoom: number,
+): void {
+  if (cols < 42 || rows < 26) return
+
+  const mapW = 140
+  const mapH = Math.round(mapW * (rows / cols))
+  const margin = 10
+  const mapX = margin
+  const mapY = canvasHeight - mapH - margin - 30 // above bottom toolbar
+  const tileW = mapW / cols
+  const tileH = mapH / rows
+
+  ctx.save()
+
+  // Background
+  ctx.fillStyle = 'rgba(8, 4, 20, 0.8)'
+  ctx.fillRect(mapX - 2, mapY - 2, mapW + 4, mapH + 4)
+
+  // Border
+  ctx.strokeStyle = 'rgba(0, 229, 255, 0.4)'
+  ctx.lineWidth = 1
+  ctx.strokeRect(mapX - 2, mapY - 2, mapW + 4, mapH + 4)
+
+  // Room quadrants
+  for (const room of MINIMAP_ROOM_COLORS) {
+    ctx.fillStyle = room.color
+    ctx.globalAlpha = 0.15
+    ctx.fillRect(
+      mapX + room.minCol * tileW,
+      mapY + room.minRow * tileH,
+      (room.maxCol - room.minCol + 1) * tileW,
+      (room.maxRow - room.minRow + 1) * tileH,
+    )
+  }
+  ctx.globalAlpha = 1.0
+
+  // Corridor lines
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
+  ctx.lineWidth = 1
+  // Vertical corridor (cols 20-21)
+  ctx.strokeRect(mapX + 20 * tileW, mapY, 2 * tileW, mapH)
+  // Horizontal corridor (rows 12-13)
+  ctx.strokeRect(mapX, mapY + 12 * tileH, mapW, 2 * tileH)
+
+  // Character dots
+  for (const ch of characters) {
+    if (ch.matrixEffect === 'despawn') continue
+    const dotX = mapX + (ch.x / TILE_SIZE) * tileW
+    const dotY = mapY + (ch.y / TILE_SIZE) * tileH
+    const dotR = ch.isPet ? 1.5 : 2.5
+
+    if (ch.isPet) {
+      ctx.fillStyle = '#ffcc44'
+      ctx.globalAlpha = 0.6
+    } else {
+      // Use room color based on position
+      const roomIdx = (ch.tileCol >= 22 ? 1 : 0) + (ch.tileRow >= 14 ? 2 : 0)
+      ctx.fillStyle = MINIMAP_ROOM_COLORS[roomIdx]?.color || '#ffffff'
+      ctx.globalAlpha = ch.isActive ? 1.0 : 0.5
+    }
+    ctx.beginPath()
+    ctx.arc(dotX, dotY, dotR, 0, Math.PI * 2)
+    ctx.fill()
+  }
+  ctx.globalAlpha = 1.0
+
+  // Viewport rectangle
+  const mapPxW = cols * TILE_SIZE * zoom
+  const mapPxH = rows * TILE_SIZE * zoom
+  const vpLeft = (-offsetX) / mapPxW * mapW
+  const vpTop = (-offsetY) / mapPxH * mapH
+  const vpW = (canvasWidth / mapPxW) * mapW
+  const vpH = (canvasHeight / mapPxH) * mapH
+
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 1
+  ctx.globalAlpha = 0.5
+  ctx.strokeRect(
+    mapX + Math.max(0, vpLeft),
+    mapY + Math.max(0, vpTop),
+    Math.min(vpW, mapW),
+    Math.min(vpH, mapH),
+  )
+  ctx.globalAlpha = 1.0
+
+  ctx.restore()
+}
+
+// ── Day/night cycle ─────────────────────────────────────────────
+
+export function renderDayNightCycle(
+  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+): void {
+  const hour = new Date().getHours() + new Date().getMinutes() / 60
+
+  let tintColor: string
+  let alpha: number
+
+  if (hour >= 6 && hour < 9) {
+    // Morning: warm orange tint
+    const t = (hour - 6) / 3 // 0→1
+    alpha = 0.06 * (1 - t) // fades as morning progresses
+    tintColor = `rgba(255, 180, 80, ${alpha})`
+  } else if (hour >= 9 && hour < 17) {
+    // Day: no tint
+    return
+  } else if (hour >= 17 && hour < 20) {
+    // Evening: warm sunset
+    const t = (hour - 17) / 3 // 0→1
+    alpha = 0.04 + 0.08 * t
+    tintColor = `rgba(255, 140, 50, ${alpha})`
+  } else {
+    // Night: cool blue
+    let intensity: number
+    if (hour >= 20) {
+      intensity = Math.min(1, (hour - 20) / 3) // ramps up 20→23
+    } else {
+      intensity = Math.max(0, 1 - (hour / 6)) // ramps down 0→6
+    }
+    alpha = 0.08 + 0.1 * intensity
+    tintColor = `rgba(20, 30, 80, ${alpha})`
+  }
+
+  ctx.save()
+  ctx.fillStyle = tintColor
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight)
+  ctx.restore()
 }
 
 export function renderFrame(

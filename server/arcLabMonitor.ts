@@ -134,19 +134,78 @@ async function fetchRecentEvents(): Promise<ArcEvent[]> {
   return [];
 }
 
+async function fetchTraining(): Promise<ArcTrainingStatus[]> {
+  try {
+    const raw = await httpGet(`${ARC_API}/api/training`);
+    const data = JSON.parse(raw);
+    const jobs = Array.isArray(data) ? data : (data.training || data.jobs || []);
+    return jobs.map((t: any) => ({
+      name: t.name || t.job_name || 'unknown',
+      node: t.node || t.hostname || 'unknown',
+      epoch: t.epoch || t.current_epoch || 0,
+      totalEpochs: t.total_epochs || t.max_epochs || 0,
+      status: t.status || 'unknown',
+    }));
+  } catch {
+    // Fallback: extract training info from running experiments
+    try {
+      const raw = await httpGet(`${ARC_API}/api/experiments?type=training`);
+      const data = JSON.parse(raw);
+      const exps = Array.isArray(data) ? data : (data.experiments || []);
+      return exps
+        .filter((e: any) => e.type === 'training' && e.status === 'running')
+        .map((e: any) => ({
+          name: e.name || 'training',
+          node: e.node || e.hostname || 'unknown',
+          epoch: e.progress?.epoch || e.epoch || 0,
+          totalEpochs: e.progress?.total_epochs || e.total_epochs || 0,
+          status: e.status || 'running',
+        }));
+    } catch {
+      return [];
+    }
+  }
+}
+
+async function fetchScores(): Promise<ArcLabStatus['scores']> {
+  try {
+    const raw = await httpGet(`${ARC_API}/api/scores`);
+    const data = JSON.parse(raw);
+    return {
+      liveScore: String(data.live_score ?? data.liveScore ?? '--'),
+      localEval: String(data.local_eval ?? data.localEval ?? '--'),
+      blackBoxEval: String(data.black_box_eval ?? data.blackBoxEval ?? '--'),
+    };
+  } catch {
+    try {
+      const raw = await httpGet(`${ARC_API}/api/scorecard`);
+      const data = JSON.parse(raw);
+      return {
+        liveScore: String(data.score ?? data.live_score ?? '--'),
+        localEval: String(data.local ?? data.local_eval ?? '--'),
+        blackBoxEval: String(data.black_box ?? data.black_box_eval ?? '--'),
+      };
+    } catch {
+      return { liveScore: '--', localEval: '--', blackBoxEval: '--' };
+    }
+  }
+}
+
 async function pollArcLab(): Promise<void> {
-  const [health, experiments, events] = await Promise.all([
+  const [health, experiments, events, training, scores] = await Promise.all([
     checkHealth(),
     fetchExperiments(),
     fetchRecentEvents(),
+    fetchTraining(),
+    fetchScores(),
   ]);
 
   currentStatus = {
     health,
     experiments,
     recentEvents: events,
-    scores: currentStatus.scores, // preserved until we can fetch from scorecard
-    training: currentStatus.training,
+    scores,
+    training,
   };
 }
 

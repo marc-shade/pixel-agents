@@ -137,6 +137,7 @@ function App() {
       os.addPet('cat')
       os.addPet('corgi')
       os.addPet('robot')
+      os.addPet('fish')
     }
   }, [layoutReady])
 

@@ -93,6 +93,11 @@ export function createCharacter(
   }
 }
 
+// Coffee break timing
+const COFFEE_BREAK_CHANCE = 0.2 // 20% chance per wander decision
+const COFFEE_STAND_MIN_SEC = 3
+const COFFEE_STAND_MAX_SEC = 6
+
 export function updateCharacter(
   ch: Character,
   dt: number,
@@ -100,6 +105,7 @@ export function updateCharacter(
   seats: Map<string, Seat>,
   tileMap: TileTypeVal[][],
   blockedTiles: Set<string>,
+  interestPoints?: Array<{ col: number; row: number; dir: Direction }>,
 ): void {
   ch.frameTimer += dt
 
@@ -206,7 +212,24 @@ export function updateCharacter(
             }
           }
         }
-        if (walkableTiles.length > 0) {
+        // Coffee break: sometimes walk to an interest point instead of random tile
+        let pickedTarget = false
+        if (interestPoints && interestPoints.length > 0 && Math.random() < COFFEE_BREAK_CHANCE) {
+          const ip = interestPoints[Math.floor(Math.random() * interestPoints.length)]
+          const path = findPath(ch.tileCol, ch.tileRow, ip.col, ip.row, tileMap, blockedTiles)
+          if (path.length > 0) {
+            ch.path = path
+            ch.moveProgress = 0
+            ch.state = CharacterState.WALK
+            ch.frame = 0
+            ch.frameTimer = 0
+            ch.wanderCount++
+            // After arriving, stand facing the machine briefly
+            ch.seatTimer = randomRange(COFFEE_STAND_MIN_SEC, COFFEE_STAND_MAX_SEC)
+            pickedTarget = true
+          }
+        }
+        if (!pickedTarget && walkableTiles.length > 0) {
           const target = walkableTiles[Math.floor(Math.random() * walkableTiles.length)]
           const path = findPath(ch.tileCol, ch.tileRow, target.col, target.row, tileMap, blockedTiles)
           if (path.length > 0) {

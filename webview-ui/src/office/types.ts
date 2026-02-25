@@ -203,3 +203,9 @@ export interface Character {
   /** Per-column random seeds (16 values) for staggered rain timing */
   matrixEffectSeeds: number[]
 }
+
+export interface InterestPoint {
+  col: number
+  row: number
+  dir: Direction
+}

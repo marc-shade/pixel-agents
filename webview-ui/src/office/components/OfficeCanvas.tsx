@@ -3,7 +3,7 @@ import type { OfficeState } from '../engine/officeState.js'
 import type { EditorState } from '../editor/editorState.js'
 import type { EditorRenderState, SelectionRenderState, DeleteButtonBounds, RotateButtonBounds, ArcLabHUDData } from '../engine/renderer.js'
 import { startGameLoop } from '../engine/gameLoop.js'
-import { renderFrame, renderArcLabHUD } from '../engine/renderer.js'
+import { renderFrame, renderArcLabHUD, renderMiniMap, renderDayNightCycle, setArcLabData } from '../engine/renderer.js'
 import { TILE_SIZE, EditTool } from '../types.js'
 import { CAMERA_FOLLOW_LERP, CAMERA_FOLLOW_SNAP_THRESHOLD, ZOOM_MIN, ZOOM_MAX, ZOOM_SCROLL_THRESHOLD, PAN_MARGIN_FRACTION } from '../../constants.js'
 import { getCatalogEntry, isRotatable } from '../layout/furnitureCatalog.js'
@@ -222,11 +222,21 @@ export function OfficeCanvas({ officeState, onClick, isEditMode, editorState, on
         )
         offsetRef.current = { x: offsetX, y: offsetY }
 
+        // Set ARC lab data for health-aware furniture rendering
+        const arcData = arcLabStatusRef?.current ?? null
+        setArcLabData(arcData)
+
+        // Day/night ambient cycle
+        renderDayNightCycle(ctx, w, h)
+
         // ARC-AGI-3 Lab HUD overlay (fixed screen position)
-        const arcData = arcLabStatusRef?.current
         if (arcData) {
           renderArcLabHUD(ctx, w, h, arcData)
         }
+
+        // Mini-map (bottom-left corner)
+        const layout = officeState.getLayout()
+        renderMiniMap(ctx, w, h, officeState.getCharacters(), layout.cols, layout.rows, offsetX, offsetY, zoom)
 
         // Store delete/rotate button bounds for hit-testing
         deleteButtonBoundsRef.current = editorRender?.deleteButtonBounds ?? null

@@ -8,7 +8,7 @@ import { setFloorSprites } from '../office/floorTiles.js'
 import { setWallSprites } from '../office/wallTiles.js'
 import { setCharacterTemplates } from '../office/sprites/spriteData.js'
 import { vscode } from '../vscodeApi.js'
-import { playDoneSound, setSoundEnabled } from '../notificationSound.js'
+import { playDoneSound, setSoundEnabled, isNodeMuted } from '../notificationSound.js'
 
 export interface SubagentCharacter {
   id: number
@@ -133,6 +133,8 @@ export function useExtensionMessages(
 
   // Track whether initial layout has been loaded (ref to avoid re-render)
   const layoutReadyRef = useRef(false)
+  // Track agent-to-node mapping for per-node sound muting (ref avoids stale closure)
+  const agentNodeMapRef = useRef(new Map<number, string>())
 
   useEffect(() => {
     // Buffer agents from existingAgents until layout is loaded
@@ -172,6 +174,7 @@ export function useExtensionMessages(
         setAgents((prev) => (prev.includes(id) ? prev : [...prev, id]))
         setSelectedAgent(id)
         if (msg.nodeName) {
+          agentNodeMapRef.current.set(id, msg.nodeName as string)
           setAgentMeta((prev) => ({
             ...prev,
             [id]: { nodeName: msg.nodeName as string, projectName: msg.projectName as string, nodeColor: msg.nodeColor as string },
@@ -223,6 +226,7 @@ export function useExtensionMessages(
           const nodeRoom = m?.nodeName ? NODE_ROOM_MAP[m.nodeName] : undefined
           pendingAgents.push({ id, palette: m?.palette, hueShift: m?.hueShift, seatId: m?.seatId, nodeRoom })
           if (m?.nodeName) {
+            agentNodeMapRef.current.set(id, m.nodeName)
             newMeta[id] = { nodeName: m.nodeName, projectName: m.projectName || 'unknown', nodeColor: m.nodeColor || '#888888' }
           }
         }
@@ -309,7 +313,10 @@ export function useExtensionMessages(
         os.setAgentActive(id, status === 'active')
         if (status === 'waiting') {
           os.showWaitingBubble(id)
-          playDoneSound()
+          const nodeName = agentNodeMapRef.current.get(id)
+          if (!nodeName || !isNodeMuted(nodeName)) {
+            playDoneSound()
+          }
         }
       } else if (msg.type === 'agentToolPermission') {
         const id = msg.id as number

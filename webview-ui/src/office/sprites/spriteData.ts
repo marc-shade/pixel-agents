@@ -1466,6 +1466,114 @@ const ROBOT_SLEEP_2: SpriteData = [
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
 ]
 
+// ── Fish pet colors ─────────────────────────────────────────────
+const fshB = '#2277CC' // body deep blue
+const fshL = '#55AAFF' // light scales
+const fshF = '#FF8833' // fins orange
+const fshW = '#DDEEFF' // belly white
+const fshE = '#112233' // eye dark
+const fshT = '#FF5522' // tail orange-red
+
+/** Fish front-facing (down) stand — head-on oval with side fins */
+const FISH_DOWN_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshF,fshB,_,_,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshL,fshB,fshL,fshB,_,_,_,_,_,_],
+  [_,_,_,_,fshB,fshL,fshB,fshL,fshB,fshL,fshB,_,_,_,_,_],
+  [_,_,_,fshF,fshB,fshE,fshL,fshB,fshL,fshE,fshB,fshF,_,_,_,_],
+  [_,_,_,_,fshB,fshB,fshW,fshW,fshW,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshW,fshW,fshW,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshB,fshB,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Fish back-facing (up) stand — tail visible, body from behind */
+const FISH_UP_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshT,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshT,fshT,fshT,_,_,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshB,fshB,fshB,fshB,_,_,_,_,_,_],
+  [_,_,_,_,fshB,fshL,fshB,fshL,fshB,fshL,fshB,_,_,_,_,_],
+  [_,_,_,fshF,fshB,fshL,fshB,fshL,fshB,fshL,fshB,fshF,_,_,_,_],
+  [_,_,_,_,fshB,fshB,fshB,fshB,fshB,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshB,fshB,fshB,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshB,fshB,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Fish side-facing (right) stand — classic fish profile */
+const FISH_RIGHT_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshB,fshF,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshL,fshB,fshL,fshB,_,_,_,_,_],
+  [_,_,_,fshT,fshT,fshB,fshL,fshB,fshL,fshB,fshB,_,_,_,_,_],
+  [_,_,fshT,fshT,fshT,fshB,fshL,fshB,fshE,fshW,fshB,fshB,_,_,_,_],
+  [_,_,_,fshT,fshT,fshB,fshW,fshW,fshW,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshW,fshB,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshB,fshB,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Fish sleep frame 1: floating still on side */
+const FISH_SLEEP_1: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_],
+  [_,_,_,fshT,fshT,fshB,fshB,fshL,fshB,fshB,_,_,_,_,_,_],
+  [_,_,fshT,fshT,fshB,fshB,fshL,fshB,fshB,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshW,fshW,fshW,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshB,fshB,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Fish sleep frame 2: slight bubble */
+const FISH_SLEEP_2: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,fshL,_,_,_,_],
+  [_,_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_],
+  [_,_,_,fshT,fshT,fshB,fshB,fshL,fshB,fshB,_,_,_,_,_,_],
+  [_,_,fshT,fshT,fshB,fshB,fshL,fshB,fshB,fshB,fshB,_,_,_,_,_],
+  [_,_,_,_,_,fshB,fshW,fshW,fshW,fshB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,fshB,fshB,fshB,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
 // ── Pet sprite assembly ────────────────────────────────────────
 
 function buildPetSprites(
@@ -1605,6 +1713,42 @@ export function getPetSprites(petType: string): CharacterSprites {
       ],
       // sleep frames
       [ROBOT_SLEEP_1, ROBOT_SLEEP_2],
+    )
+  } else if (petType === 'fish') {
+    sprites = buildPetSprites(
+      FISH_DOWN_STAND, FISH_UP_STAND, FISH_RIGHT_STAND, 10,
+      // down fin A (fin sways left)
+      [
+        [_,_,_,_,_,fshF,fshF,_,_,_,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // down fin B (fin sways right)
+      [
+        [_,_,_,_,_,_,_,_,fshF,fshF,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // up fin A
+      [
+        [_,_,_,_,_,fshF,fshF,_,_,_,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // up fin B
+      [
+        [_,_,_,_,_,_,_,_,fshF,fshF,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // right fin A (fin forward)
+      [
+        [_,_,_,_,_,_,_,fshF,fshF,_,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // right fin B (fin back)
+      [
+        [_,_,_,_,_,_,fshF,_,_,_,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+      ],
+      // sleep frames
+      [FISH_SLEEP_1, FISH_SLEEP_2],
     )
   } else {
     // corgi
