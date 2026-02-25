@@ -41,6 +41,14 @@ export interface AgentMeta {
   nodeColor: string
 }
 
+/** Map cluster node hostnames to distinct hue shifts for visual identity */
+const NODE_HUE_MAP: Record<string, number> = {
+  'mac-studio': 0,       // default cyan
+  'macbook-air': 80,     // green shift
+  'macmini': -60,        // magenta shift
+  'macpro51': 30,        // orange shift
+}
+
 /** Map cluster node hostnames to office room quadrants */
 const NODE_ROOM_MAP: Record<string, string> = {
   'mac-studio': 'top-left',
@@ -132,7 +140,8 @@ export function useExtensionMessages(
           }))
         }
         const nodeRoom = msg.nodeName ? NODE_ROOM_MAP[msg.nodeName as string] : undefined
-        os.addAgent(id, undefined, undefined, undefined, undefined, nodeRoom)
+        const nodeHue = msg.nodeName ? NODE_HUE_MAP[msg.nodeName as string] ?? 0 : undefined
+        os.addAgent(id, undefined, nodeHue, undefined, undefined, nodeRoom)
         saveAgentSeats(os)
       } else if (msg.type === 'agentClosed') {
         const id = msg.id as number

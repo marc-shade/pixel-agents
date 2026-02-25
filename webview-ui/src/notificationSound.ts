@@ -9,6 +9,7 @@ import {
 
 let soundEnabled = true
 let audioCtx: AudioContext | null = null
+const mutedNodes = new Set<string>()
 
 export function setSoundEnabled(enabled: boolean): void {
   soundEnabled = enabled
@@ -16,6 +17,19 @@ export function setSoundEnabled(enabled: boolean): void {
 
 export function isSoundEnabled(): boolean {
   return soundEnabled
+}
+
+export function setNodeMuted(node: string, muted: boolean): void {
+  if (muted) mutedNodes.add(node)
+  else mutedNodes.delete(node)
+}
+
+export function isNodeMuted(node: string): boolean {
+  return mutedNodes.has(node)
+}
+
+export function getMutedNodes(): Set<string> {
+  return mutedNodes
 }
 
 function playNote(ctx: AudioContext, freq: number, startOffset: number): void {

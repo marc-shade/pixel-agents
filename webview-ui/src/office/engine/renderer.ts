@@ -502,6 +502,12 @@ export function renderBubbles(
     const bubbleY = Math.round(offsetY + (ch.y + sittingOff - BUBBLE_VERTICAL_OFFSET_PX) * zoom - cached.height - 1 * zoom)
 
     ctx.save()
+    if (ch.bubbleType === 'permission') {
+      // Pulsing neon glow for permission bubbles
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() / 300)
+      ctx.shadowColor = '#ff00ff'
+      ctx.shadowBlur = (8 + pulse * 8) * zoom
+    }
     if (alpha < 1.0) ctx.globalAlpha = alpha
     ctx.drawImage(cached, bubbleX, bubbleY)
     ctx.restore()
@@ -569,6 +575,118 @@ export interface SelectionRenderState {
   characters: Map<number, Character>
 }
 
+// ── Room labels ──────────────────────────────────────────────────
+
+const ROOM_LABELS: Array<{ label: string; color: string; roomCol: number; roomRow: number; roomW: number; roomH: number }> = [
+  { label: 'mac-studio',  color: '#00e5ff', roomCol: 1,  roomRow: 1,  roomW: 19, roomH: 11 },
+  { label: 'macbook-air', color: '#66ff66', roomCol: 22, roomRow: 1,  roomW: 19, roomH: 11 },
+  { label: 'macmini',     color: '#ff44ff', roomCol: 1,  roomRow: 14, roomW: 19, roomH: 11 },
+  { label: 'macpro51',    color: '#ff8844', roomCol: 22, roomRow: 14, roomW: 19, roomH: 11 },
+]
+
+function renderRoomLabels(
+  ctx: CanvasRenderingContext2D,
+  offsetX: number,
+  offsetY: number,
+  zoom: number,
+  cols: number,
+  rows: number,
+): void {
+  if (cols < 42 || rows < 26) return // only for 4-room layout
+  const s = TILE_SIZE * zoom
+  const fontSize = Math.max(7, Math.round(8 * zoom))
+  ctx.save()
+  ctx.font = `bold ${fontSize}px monospace`
+  ctx.textBaseline = 'top'
+  for (const room of ROOM_LABELS) {
+    const x = offsetX + (room.roomCol + 0.5) * s
+    const y = offsetY + (room.roomRow + 0.2) * s
+    // Glow effect
+    ctx.shadowColor = room.color
+    ctx.shadowBlur = 6 * zoom
+    ctx.fillStyle = room.color
+    ctx.globalAlpha = 0.7
+    ctx.fillText(room.label, x, y)
+    ctx.shadowBlur = 0
+  }
+  ctx.restore()
+}
+
+// ── Network activity visualization ───────────────────────────────
+
+interface NetworkParticle {
+  x: number
+  y: number
+  vx: number
+  vy: number
+  life: number
+  color: string
+}
+
+const networkParticles: NetworkParticle[] = []
+let lastNetworkSpawn = 0
+
+function renderNetworkActivity(
+  ctx: CanvasRenderingContext2D,
+  characters: Character[],
+  offsetX: number,
+  offsetY: number,
+  zoom: number,
+  cols: number,
+  rows: number,
+): void {
+  if (cols < 42 || rows < 26) return
+  const now = performance.now()
+  const s = TILE_SIZE * zoom
+
+  // Count active (typing/reading) agents to drive particle density
+  const activeCount = characters.filter(
+    (ch) => !ch.isPet && (ch.state === CharacterState.TYPE || ch.currentTool),
+  ).length
+
+  if (activeCount === 0 && networkParticles.length === 0) return
+
+  // Corridor center (the 2-tile-wide corridors at cols 20-21 and rows 12-13)
+  const corridorCX = offsetX + 21 * s  // horizontal corridor center
+  const corridorCY = offsetY + 13 * s  // vertical corridor center
+
+  // Spawn particles from the corridor intersection
+  if (activeCount > 0 && now - lastNetworkSpawn > 200 / activeCount) {
+    lastNetworkSpawn = now
+    const angle = Math.random() * Math.PI * 2
+    const speed = (0.3 + Math.random() * 0.4) * zoom
+    const colors = ['#00e5ff', '#66ff66', '#ff44ff', '#ff8844']
+    networkParticles.push({
+      x: corridorCX + (Math.random() - 0.5) * s,
+      y: corridorCY + (Math.random() - 0.5) * s,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: 1.0,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    })
+  }
+
+  // Update and draw particles
+  ctx.save()
+  for (let i = networkParticles.length - 1; i >= 0; i--) {
+    const p = networkParticles[i]
+    p.x += p.vx
+    p.y += p.vy
+    p.life -= 0.012
+    if (p.life <= 0) {
+      networkParticles.splice(i, 1)
+      continue
+    }
+    const size = Math.max(1, Math.round(2 * zoom * p.life))
+    ctx.globalAlpha = p.life * 0.6
+    ctx.shadowColor = p.color
+    ctx.shadowBlur = 4 * zoom
+    ctx.fillStyle = p.color
+    ctx.fillRect(p.x - size / 2, p.y - size / 2, size, size)
+  }
+  ctx.restore()
+}
+
 export function renderFrame(
   ctx: CanvasRenderingContext2D,
   canvasWidth: number,
@@ -618,6 +736,12 @@ export function renderFrame(
   const selectedId = selection?.selectedAgentId ?? null
   const hoveredId = selection?.hoveredAgentId ?? null
   renderScene(ctx, allFurniture, characters, offsetX, offsetY, zoom, selectedId, hoveredId)
+
+  // Room labels (node hostnames, below bubbles)
+  renderRoomLabels(ctx, offsetX, offsetY, zoom, cols, rows)
+
+  // Network activity visualization (animated particles between rooms)
+  renderNetworkActivity(ctx, characters, offsetX, offsetY, zoom, cols, rows)
 
   // Speech bubbles (always on top of characters)
   renderBubbles(ctx, characters, offsetX, offsetY, zoom)

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { vscode } from '../vscodeApi.js'
-import { isSoundEnabled, setSoundEnabled } from '../notificationSound.js'
+import { isSoundEnabled, setSoundEnabled, isNodeMuted, setNodeMuted } from '../notificationSound.js'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -27,6 +27,18 @@ const menuItemBase: React.CSSProperties = {
 export function SettingsModal({ isOpen, onClose, isDebugMode, onToggleDebugMode }: SettingsModalProps) {
   const [hovered, setHovered] = useState<string | null>(null)
   const [soundLocal, setSoundLocal] = useState(isSoundEnabled)
+  const NODES = ['mac-studio', 'macbook-air', 'macmini', 'macpro51'] as const
+  const NODE_COLORS: Record<string, string> = {
+    'mac-studio': '#00e5ff',
+    'macbook-air': '#66ff66',
+    'macmini': '#ff44ff',
+    'macpro51': '#ff8844',
+  }
+  const [nodeMuted, setNodeMutedLocal] = useState<Record<string, boolean>>(() => {
+    const m: Record<string, boolean> = {}
+    for (const n of NODES) m[n] = isNodeMuted(n)
+    return m
+  })
 
   if (!isOpen) return null
 
@@ -168,6 +180,48 @@ export function SettingsModal({ isOpen, onClose, isDebugMode, onToggleDebugMode 
             {soundLocal ? 'X' : ''}
           </span>
         </button>
+        {/* Per-node sound toggles */}
+        {soundLocal && NODES.map((node) => (
+          <button
+            key={node}
+            onClick={() => {
+              const newMuted = !nodeMuted[node]
+              setNodeMuted(node, newMuted)
+              setNodeMutedLocal((prev) => ({ ...prev, [node]: newMuted }))
+            }}
+            onMouseEnter={() => setHovered(`node-${node}`)}
+            onMouseLeave={() => setHovered(null)}
+            style={{
+              ...menuItemBase,
+              paddingLeft: 28,
+              fontSize: '20px',
+              background: hovered === `node-${node}` ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
+            }}
+          >
+            <span>
+              <span style={{ color: NODE_COLORS[node], marginRight: 6 }}>&#9679;</span>
+              {node}
+            </span>
+            <span
+              style={{
+                width: 14,
+                height: 14,
+                border: '2px solid rgba(255, 255, 255, 0.5)',
+                borderRadius: 0,
+                background: !nodeMuted[node] ? 'rgba(90, 140, 255, 0.8)' : 'transparent',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                lineHeight: 1,
+                color: '#fff',
+              }}
+            >
+              {!nodeMuted[node] ? 'X' : ''}
+            </span>
+          </button>
+        ))}
         <button
           onClick={onToggleDebugMode}
           onMouseEnter={() => setHovered('debug')}
