@@ -157,6 +157,7 @@ let cachedDefaultLayout: Record<string, unknown> | null = null;
 
 async function loadAllAssets(): Promise<void> {
 	const candidates = [
+		path.resolve(__dirname, 'webview'),
 		path.resolve(__dirname),
 		path.resolve(__dirname, '..'),
 	];

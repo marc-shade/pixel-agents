@@ -18,9 +18,9 @@ const btnStyle: React.CSSProperties = {
 
 const activeBtnStyle: React.CSSProperties = {
   ...btnStyle,
-  background: 'rgba(90, 140, 255, 0.25)',
-  color: 'rgba(255, 255, 255, 0.9)',
-  border: '2px solid #5a8cff',
+  background: 'rgba(0, 255, 255, 0.18)',
+  color: 'rgba(200, 255, 255, 0.95)',
+  border: '2px solid #00ffff',
 }
 
 const tabStyle: React.CSSProperties = {
@@ -35,9 +35,9 @@ const tabStyle: React.CSSProperties = {
 
 const activeTabStyle: React.CSSProperties = {
   ...tabStyle,
-  background: 'rgba(255, 255, 255, 0.08)',
-  color: 'rgba(255, 255, 255, 0.8)',
-  border: '2px solid #5a8cff',
+  background: 'rgba(0, 255, 255, 0.1)',
+  color: 'rgba(200, 255, 255, 0.9)',
+  border: '2px solid #00ffff',
 }
 
 interface EditorToolbarProps {
@@ -97,7 +97,7 @@ function FloorPatternPreview({ patternIndex, color, selected, onClick }: {
         width: displaySize,
         height: displaySize,
         padding: 0,
-        border: selected ? '2px solid #5a8cff' : '2px solid #4a4a6a',
+        border: selected ? '2px solid #00ffff' : '2px solid #2a1a4a',
         borderRadius: 0,
         cursor: 'pointer',
         overflow: 'hidden',
@@ -217,14 +217,14 @@ export function EditorToolbar({
         bottom: 68,
         left: 10,
         zIndex: 50,
-        background: '#1e1e2e',
-        border: '2px solid #4a4a6a',
+        background: '#0a0612',
+        border: '2px solid #2a1a4a',
         borderRadius: 0,
         padding: '6px 8px',
         display: 'flex',
         flexDirection: 'column-reverse',
         gap: 6,
-        boxShadow: '2px 2px 0px #0a0a14',
+        boxShadow: '2px 2px 0px #050210, 0 0 12px rgba(0, 255, 255, 0.1)',
         maxWidth: 'calc(100vw - 20px)',
       }}
     >
@@ -289,7 +289,7 @@ export function EditorToolbar({
               gap: 3,
               padding: '4px 6px',
               background: '#181828',
-              border: '2px solid #4a4a6a',
+              border: '2px solid #2a1a4a',
               borderRadius: 0,
             }}>
               <ColorSlider label="H" value={floorColor.h} min={0} max={360} onChange={(v) => handleColorChange('h', v)} />
@@ -336,7 +336,7 @@ export function EditorToolbar({
               gap: 3,
               padding: '4px 6px',
               background: '#181828',
-              border: '2px solid #4a4a6a',
+              border: '2px solid #2a1a4a',
               borderRadius: 0,
             }}>
               <ColorSlider label="H" value={wallColor.h} min={0} max={360} onChange={(v) => handleWallColorChange('h', v)} />
@@ -386,7 +386,7 @@ export function EditorToolbar({
                     width: thumbSize,
                     height: thumbSize,
                     background: '#2A2A3A',
-                    border: isSelected ? '2px solid #5a8cff' : '2px solid #4a4a6a',
+                    border: isSelected ? '2px solid #00ffff' : '2px solid #2a1a4a',
                     borderRadius: 0,
                     cursor: 'pointer',
                     padding: 0,
@@ -448,7 +448,7 @@ export function EditorToolbar({
               gap: 3,
               padding: '4px 6px',
               background: '#181828',
-              border: '2px solid #4a4a6a',
+              border: '2px solid #2a1a4a',
               borderRadius: 0,
             }}>
               {effectiveColor.colorize ? (

@@ -7,44 +7,44 @@
 }
 
 :root {
-  --pixel-bg: #1e1e2e;
-  --pixel-border: #4a4a6a;
-  --pixel-border-light: #6a6a8a;
-  --pixel-accent: #5a8cff;
-  --pixel-green: #5ac88c;
-  --pixel-shadow: 2px 2px 0px #0a0a14;
+  --pixel-bg: #0a0612;
+  --pixel-border: #2a1a4a;
+  --pixel-border-light: #4a2a6a;
+  --pixel-accent: #00ffff;
+  --pixel-green: #ff00ff;
+  --pixel-shadow: 2px 2px 0px #050210, 0 0 8px rgba(0, 255, 255, 0.15);
 
   /* Button base */
-  --pixel-text: rgba(255, 255, 255, 0.8);
-  --pixel-text-dim: rgba(255, 255, 255, 0.7);
-  --pixel-btn-bg: rgba(255, 255, 255, 0.08);
-  --pixel-btn-hover-bg: rgba(255, 255, 255, 0.15);
+  --pixel-text: rgba(200, 240, 255, 0.9);
+  --pixel-text-dim: rgba(150, 200, 255, 0.7);
+  --pixel-btn-bg: rgba(0, 255, 255, 0.06);
+  --pixel-btn-hover-bg: rgba(0, 255, 255, 0.18);
   --pixel-btn-disabled-opacity: 0.35;
 
   /* Active/selected button state */
-  --pixel-active-bg: rgba(90, 140, 255, 0.25);
+  --pixel-active-bg: rgba(0, 255, 255, 0.2);
 
   /* Agent button */
-  --pixel-agent-bg: rgba(90, 200, 140, 0.15);
-  --pixel-agent-hover-bg: rgba(90, 200, 140, 0.3);
-  --pixel-agent-border: #5ac88c;
-  --pixel-agent-text: rgba(200, 255, 220, 0.95);
+  --pixel-agent-bg: rgba(255, 0, 255, 0.12);
+  --pixel-agent-hover-bg: rgba(255, 0, 255, 0.28);
+  --pixel-agent-border: #ff00ff;
+  --pixel-agent-text: rgba(255, 180, 255, 0.95);
 
   /* Close button */
-  --pixel-close-text: rgba(255, 255, 255, 0.5);
-  --pixel-close-hover: #e55;
+  --pixel-close-text: rgba(255, 100, 200, 0.6);
+  --pixel-close-hover: #ff0066;
 
   /* Hints & confirmations */
-  --pixel-hint-bg: #3278c8;
-  --pixel-reset-text: #ecc;
-  --pixel-danger-bg: #a33;
+  --pixel-hint-bg: #0088aa;
+  --pixel-reset-text: #ffaacc;
+  --pixel-danger-bg: #aa0044;
 
   /* Vignette */
-  --pixel-vignette: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.6) 100%);
+  --pixel-vignette: radial-gradient(ellipse at center, transparent 40%, rgba(10, 0, 30, 0.75) 100%);
 
   /* Status dot colors */
-  --pixel-status-permission: var(--vscode-charts-yellow, #cca700);
-  --pixel-status-active: var(--vscode-charts-blue, #3794ff);
+  --pixel-status-permission: var(--vscode-charts-yellow, #ffaa00);
+  --pixel-status-active: var(--vscode-charts-blue, #00ffff);
 
   /* ToolOverlay z-index layers */
   --pixel-overlay-z: 100;

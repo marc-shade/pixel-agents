@@ -222,8 +222,8 @@ export const CHAIR_SPRITE: SpriteData = (() => {
 /** PC monitor: 16x16 — top-down monitor on stand */
 export const PC_SPRITE: SpriteData = (() => {
   const F = '#555555'
-  const S = '#3A3A5C'
-  const B = '#6688CC'
+  const S = '#1a0a3a'
+  const B = '#00cccc'
   const D = '#444444'
   return [
     [_, _, _, F, F, F, F, F, F, F, F, F, F, _, _, _],

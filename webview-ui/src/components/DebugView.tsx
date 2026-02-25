@@ -68,7 +68,7 @@ export function DebugView({
       <div
         key={id}
         style={{
-          border: `2px solid ${isSelected ? '#5a8cff' : '#4a4a6a'}`,
+          border: `2px solid ${isSelected ? '#00ffff' : '#2a1a4a'}`,
           borderRadius: 0,
           padding: '6px 8px',
           background: isSelected ? 'var(--vscode-list-activeSelectionBackground, rgba(255,255,255,0.04))' : undefined,

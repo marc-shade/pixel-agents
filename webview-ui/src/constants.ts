@@ -26,7 +26,7 @@ export const MATRIX_SPRITE_ROWS = 24
 export const MATRIX_FLICKER_FPS = 30
 export const MATRIX_FLICKER_VISIBILITY_THRESHOLD = 180
 export const MATRIX_COLUMN_STAGGER_RANGE = 0.3
-export const MATRIX_HEAD_COLOR = '#ccffcc'
+export const MATRIX_HEAD_COLOR = '#00ffff'
 export const MATRIX_TRAIL_OVERLAY_ALPHA = 0.6
 export const MATRIX_TRAIL_EMPTY_ALPHA = 0.5
 export const MATRIX_TRAIL_MID_THRESHOLD = 0.33
@@ -49,23 +49,23 @@ export const BUTTON_LINE_WIDTH_ZOOM_FACTOR = 0.5
 export const BUBBLE_FADE_DURATION_SEC = 0.5
 export const BUBBLE_SITTING_OFFSET_PX = 10
 export const BUBBLE_VERTICAL_OFFSET_PX = 24
-export const FALLBACK_FLOOR_COLOR = '#808080'
+export const FALLBACK_FLOOR_COLOR = '#2a1845'
 
 // ── Rendering - Overlay Colors (canvas, not CSS) ─────────────
-export const SEAT_OWN_COLOR = 'rgba(0, 127, 212, 0.35)'
-export const SEAT_AVAILABLE_COLOR = 'rgba(0, 200, 80, 0.35)'
-export const SEAT_BUSY_COLOR = 'rgba(220, 50, 50, 0.35)'
-export const GRID_LINE_COLOR = 'rgba(255,255,255,0.12)'
-export const VOID_TILE_OUTLINE_COLOR = 'rgba(255,255,255,0.08)'
+export const SEAT_OWN_COLOR = 'rgba(0, 255, 255, 0.3)'
+export const SEAT_AVAILABLE_COLOR = 'rgba(0, 255, 100, 0.3)'
+export const SEAT_BUSY_COLOR = 'rgba(255, 0, 100, 0.3)'
+export const GRID_LINE_COLOR = 'rgba(0, 255, 255, 0.08)'
+export const VOID_TILE_OUTLINE_COLOR = 'rgba(100, 0, 255, 0.1)'
 export const VOID_TILE_DASH_PATTERN: [number, number] = [2, 2]
-export const GHOST_BORDER_HOVER_FILL = 'rgba(60, 130, 220, 0.25)'
-export const GHOST_BORDER_HOVER_STROKE = 'rgba(60, 130, 220, 0.5)'
-export const GHOST_BORDER_STROKE = 'rgba(255, 255, 255, 0.06)'
-export const GHOST_VALID_TINT = '#00ff00'
-export const GHOST_INVALID_TINT = '#ff0000'
-export const SELECTION_HIGHLIGHT_COLOR = '#007fd4'
-export const DELETE_BUTTON_BG = 'rgba(200, 50, 50, 0.85)'
-export const ROTATE_BUTTON_BG = 'rgba(50, 120, 200, 0.85)'
+export const GHOST_BORDER_HOVER_FILL = 'rgba(0, 255, 255, 0.2)'
+export const GHOST_BORDER_HOVER_STROKE = 'rgba(0, 255, 255, 0.5)'
+export const GHOST_BORDER_STROKE = 'rgba(255, 0, 255, 0.08)'
+export const GHOST_VALID_TINT = '#00ffff'
+export const GHOST_INVALID_TINT = '#ff0066'
+export const SELECTION_HIGHLIGHT_COLOR = '#00ffff'
+export const DELETE_BUTTON_BG = 'rgba(255, 0, 80, 0.85)'
+export const ROTATE_BUTTON_BG = 'rgba(0, 200, 200, 0.85)'
 
 // ── Camera ───────────────────────────────────────────────────
 export const CAMERA_FOLLOW_LERP = 0.1
@@ -84,9 +84,9 @@ export const PAN_MARGIN_FRACTION = 0.25
 // ── Editor ───────────────────────────────────────────────────
 export const UNDO_STACK_MAX_SIZE = 50
 export const LAYOUT_SAVE_DEBOUNCE_MS = 500
-export const DEFAULT_FLOOR_COLOR: FloorColor = { h: 35, s: 30, b: 15, c: 0 }
-export const DEFAULT_WALL_COLOR: FloorColor = { h: 240, s: 25, b: 0, c: 0 }
-export const DEFAULT_NEUTRAL_COLOR: FloorColor = { h: 0, s: 0, b: 0, c: 0 }
+export const DEFAULT_FLOOR_COLOR: FloorColor = { h: 270, s: 50, b: 5, c: 10 }
+export const DEFAULT_WALL_COLOR: FloorColor = { h: 250, s: 45, b: -5, c: 5 }
+export const DEFAULT_NEUTRAL_COLOR: FloorColor = { h: 280, s: 25, b: 0, c: 0 }
 
 // ── Notification Sound ──────────────────────────────────────
 export const NOTIFICATION_NOTE_1_HZ = 659.25   // E5

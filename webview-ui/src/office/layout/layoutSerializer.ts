@@ -204,11 +204,11 @@ export function getSeatTiles(seats: Map<string, Seat>): Set<string> {
   return tiles
 }
 
-/** Default floor colors for the two rooms */
-const DEFAULT_LEFT_ROOM_COLOR: FloorColor = { h: 35, s: 30, b: 15, c: 0 }  // warm beige
-const DEFAULT_RIGHT_ROOM_COLOR: FloorColor = { h: 25, s: 45, b: 5, c: 10 }  // warm brown
-const DEFAULT_CARPET_COLOR: FloorColor = { h: 280, s: 40, b: -5, c: 0 }     // purple
-const DEFAULT_DOORWAY_COLOR: FloorColor = { h: 35, s: 25, b: 10, c: 0 }     // tan
+/** Default floor colors — cyberpunk theme */
+const DEFAULT_LEFT_ROOM_COLOR: FloorColor = { h: 270, s: 50, b: 5, c: 10 }    // purple glow
+const DEFAULT_RIGHT_ROOM_COLOR: FloorColor = { h: 190, s: 60, b: 0, c: 15 }   // teal
+const DEFAULT_CARPET_COLOR: FloorColor = { h: 310, s: 55, b: 5, c: 10 }       // magenta
+const DEFAULT_DOORWAY_COLOR: FloorColor = { h: 230, s: 50, b: 0, c: 5 }       // blue
 
 /** Create the default office layout matching the current hardcoded office */
 export function createDefaultLayout(): OfficeLayout {
