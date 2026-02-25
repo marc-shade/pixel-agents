@@ -11,7 +11,7 @@ interface BottomToolbarProps {
 
 const panelStyle: React.CSSProperties = {
   position: 'absolute',
-  bottom: 10,
+  bottom: 32,
   left: '50%',
   transform: 'translateX(-50%)',
   zIndex: 'var(--pixel-controls-z)',
