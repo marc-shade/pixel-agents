@@ -132,6 +132,7 @@ function App() {
       const os = getOfficeState()
       os.addPet('cat')
       os.addPet('corgi')
+      os.addPet('robot')
     }
   }, [layoutReady])
 

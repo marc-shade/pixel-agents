@@ -1357,6 +1357,115 @@ const CORGI_SLEEP_2: SpriteData = [
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
 ]
 
+// ── Robot pet colors ──────────────────────────────────────────
+const robB = '#333344' // body dark
+const robL = '#555577' // body light
+const robH = '#6677AA' // head / highlight
+const robE = '#00FFCC' // LED eyes (cyan)
+const robA = '#FF4488' // antenna tip (magenta)
+const robG = '#444466' // grey trim
+const robW = '#AABBCC' // white accent
+
+/** Robot front-facing (down) stand — boxy droid with antenna */
+const ROBOT_DOWN_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,robA,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,robG,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,robH,robH,_,_,_,_,_],
+  [_,_,_,_,robH,robE,robH,robH,robH,robE,robH,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robW,robH,robH,robH,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,robB,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,robG,robB,robL,robL,robL,robL,robL,robB,robG,_,_,_,_],
+  [_,_,_,_,robB,robL,robE,robL,robE,robL,robB,_,_,_,_,_],
+  [_,_,_,_,robB,robL,robL,robL,robL,robL,robB,_,_,_,_,_],
+  [_,_,_,_,_,robB,robB,_,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,robG,robG,_,robG,robG,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Robot back-facing (up) stand */
+const ROBOT_UP_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,robA,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,robG,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,robH,robH,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,robH,robH,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,robH,robH,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,robB,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,robG,robB,robL,robL,robL,robL,robL,robB,robG,_,_,_,_],
+  [_,_,_,_,robB,robL,robL,robL,robL,robL,robB,_,_,_,_,_],
+  [_,_,_,_,robB,robB,robB,robB,robB,robB,robB,_,_,_,_,_],
+  [_,_,_,_,_,robB,robB,_,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,robG,robG,_,robG,robG,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Robot side-facing (right) stand */
+const ROBOT_RIGHT_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,robA,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,robG,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robH,robE,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,robH,robH,robW,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,_,_,robH,robH,robH,_,_,_,_,_,_,_],
+  [_,_,_,_,_,robB,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,_,robG,robB,robL,robL,robL,robB,robG,_,_,_,_,_],
+  [_,_,_,_,_,robB,robL,robE,robL,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,robB,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,robB,_,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,_,robG,_,_,robG,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Robot sleep frame 1: powered down, slumped */
+const ROBOT_SLEEP_1: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_,_],
+  [_,_,_,robH,robH,robB,robH,robB,robH,robH,_,_,_,_,_,_],
+  [_,_,_,robH,robH,robH,robW,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,robB,robL,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,_,robB,robL,robB,robL,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,robB,robB,robB,robB,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,robG,robG,robG,robG,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+/** Robot sleep frame 2: slight LED flicker */
+const ROBOT_SLEEP_2: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,robH,robH,robH,robH,robH,_,_,_,_,_,_,_],
+  [_,_,_,robH,robH,robB,robH,robB,robH,robH,_,_,_,_,_,_],
+  [_,_,_,robH,robH,robH,robW,robH,robH,robH,_,_,_,_,_,_],
+  [_,_,_,_,robB,robL,robL,robL,robL,robB,_,_,_,_,_,_],
+  [_,_,_,_,robB,robL,robE,robL,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,robB,robB,robB,robB,robB,robB,_,_,_,_,_,_],
+  [_,_,_,_,_,robG,robG,robG,robG,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
 // ── Pet sprite assembly ────────────────────────────────────────
 
 function buildPetSprites(
@@ -1414,7 +1523,7 @@ function buildPetSprites(
 
 const petSpriteCache = new Map<string, CharacterSprites>()
 
-/** Get sprites for a pet character by type ('cat' or 'corgi') */
+/** Get sprites for a pet character by type ('cat', 'corgi', or 'robot') */
 export function getPetSprites(petType: string): CharacterSprites {
   const cached = petSpriteCache.get(petType)
   if (cached) return cached
@@ -1460,6 +1569,42 @@ export function getPetSprites(petType: string): CharacterSprites {
       ],
       // sleep frames
       [CAT_SLEEP_1, CAT_SLEEP_2],
+    )
+  } else if (petType === 'robot') {
+    sprites = buildPetSprites(
+      ROBOT_DOWN_STAND, ROBOT_UP_STAND, ROBOT_RIGHT_STAND, 11,
+      // down legs A (spread apart — mechanical stride)
+      [
+        [_,_,_,_,robB,robB,_,_,_,robB,robB,_,_,_,_,_],
+        [_,_,_,_,robG,robG,_,_,_,robG,robG,_,_,_,_,_],
+      ],
+      // down legs B (together — mid-stride)
+      [
+        [_,_,_,_,_,_,robB,robB,robB,robB,_,_,_,_,_,_],
+        [_,_,_,_,_,_,robG,_,_,robG,_,_,_,_,_,_],
+      ],
+      // up legs A
+      [
+        [_,_,_,_,robB,robB,_,_,_,robB,robB,_,_,_,_,_],
+        [_,_,_,_,robG,robG,_,_,_,robG,robG,_,_,_,_,_],
+      ],
+      // up legs B
+      [
+        [_,_,_,_,_,_,robB,robB,robB,robB,_,_,_,_,_,_],
+        [_,_,_,_,_,_,robG,_,_,robG,_,_,_,_,_,_],
+      ],
+      // right legs A (stride out)
+      [
+        [_,_,_,_,_,robB,_,_,_,robB,robB,_,_,_,_,_],
+        [_,_,_,_,_,robG,_,_,_,_,robG,_,_,_,_,_],
+      ],
+      // right legs B (stride in)
+      [
+        [_,_,_,_,_,_,robB,robB,robB,_,_,_,_,_,_,_],
+        [_,_,_,_,_,_,_,robG,robG,_,_,_,_,_,_,_],
+      ],
+      // sleep frames
+      [ROBOT_SLEEP_1, ROBOT_SLEEP_2],
     )
   } else {
     // corgi
