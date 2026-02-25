@@ -122,7 +122,11 @@ function App() {
 
   const isEditDirty = useCallback(() => editor.isEditMode && editor.isDirty, [editor.isEditMode, editor.isDirty])
 
-  const { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets } = useExtensionMessages(getOfficeState, editor.setLastSavedLayout, isEditDirty)
+  const { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets, arcLabStatus } = useExtensionMessages(getOfficeState, editor.setLastSavedLayout, isEditDirty)
+
+  // Keep ARC lab status in a ref so the render loop can read it without re-creating the effect
+  const arcLabStatusRef = useRef(arcLabStatus)
+  useEffect(() => { arcLabStatusRef.current = arcLabStatus }, [arcLabStatus])
 
   // Spawn pets once when layout is ready
   const petsSpawned = useRef(false)
@@ -221,6 +225,7 @@ function App() {
         zoom={editor.zoom}
         onZoomChange={editor.handleZoomChange}
         panRef={editor.panRef}
+        arcLabStatusRef={arcLabStatusRef}
       />
 
       <ZoomControls zoom={editor.zoom} onZoomChange={editor.handleZoomChange} />

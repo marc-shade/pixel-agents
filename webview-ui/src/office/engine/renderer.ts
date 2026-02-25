@@ -687,6 +687,283 @@ function renderNetworkActivity(
   ctx.restore()
 }
 
+// ── ARC-AGI-3 Lab HUD ───────────────────────────────────────────
+
+export interface ArcLabHUDData {
+  health: {
+    apiServer: boolean
+    webSocket: boolean
+    orchestrator: boolean
+    reactor: boolean
+  }
+  experiments: Array<{
+    id: number
+    name: string
+    type: string
+    status: string
+    startedAt: string
+  }>
+  recentEvents: Array<{
+    id: number
+    category: string
+    severity: string
+    title: string
+    timestamp: string
+    source: string
+  }>
+  scores: {
+    liveScore: string
+    localEval: string
+    blackBoxEval: string
+  }
+  training: Array<{
+    name: string
+    node: string
+    epoch: number
+    totalEpochs: number
+    status: string
+  }>
+}
+
+let eventTickerOffset = 0
+
+const NODE_HUD_COLORS: Record<string, string> = {
+  'macpro51': '#ff8844',
+  'gcloud-t4': '#ffcc00',
+  'mac-studio': '#00e5ff',
+  'macmini': '#ff44ff',
+  'macbook-air': '#66ff66',
+}
+
+export function renderArcLabHUD(
+  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  data: ArcLabHUDData,
+): void {
+  const margin = 12
+  const panelW = 280
+  const lineH = 20
+  const pad = 10
+
+  // Calculate panel height
+  let rows = 2 // title + score
+  rows += 2 // health label + 2 dot rows
+  if (data.training.length > 0) {
+    rows += 1 + data.training.length
+  }
+  if (data.experiments.length > 0) {
+    rows += 1 + Math.min(data.experiments.length, 3)
+  }
+
+  const panelH = rows * lineH + pad * 2 + 4
+  const panelX = canvasWidth - panelW - margin
+  const panelY = margin
+
+  ctx.save()
+
+  // Panel background
+  ctx.fillStyle = 'rgba(8, 4, 20, 0.88)'
+  ctx.fillRect(panelX, panelY, panelW, panelH)
+
+  // Panel border (neon cyan)
+  ctx.strokeStyle = '#00e5ff'
+  ctx.lineWidth = 2
+  ctx.shadowColor = '#00e5ff'
+  ctx.shadowBlur = 6
+  ctx.strokeRect(panelX, panelY, panelW, panelH)
+  ctx.shadowBlur = 0
+
+  let y = panelY + pad + lineH * 0.75
+  const textX = panelX + pad
+
+  // Title
+  ctx.font = 'bold 15px monospace'
+  ctx.fillStyle = '#00e5ff'
+  ctx.shadowColor = '#00e5ff'
+  ctx.shadowBlur = 8
+  ctx.fillText('ARC-AGI-3 LAB', textX, y)
+  ctx.shadowBlur = 0
+
+  // Separator line
+  ctx.strokeStyle = 'rgba(0, 229, 255, 0.25)'
+  ctx.lineWidth = 1
+  ctx.beginPath()
+  ctx.moveTo(textX, y + 5)
+  ctx.lineTo(panelX + panelW - pad, y + 5)
+  ctx.stroke()
+  y += lineH
+
+  // Score
+  ctx.font = 'bold 13px monospace'
+  const scoreVal = data.scores.liveScore
+  const scoreColor = scoreVal === '--' ? '#555' : '#00ff88'
+  ctx.fillStyle = scoreColor
+  ctx.shadowColor = scoreColor
+  ctx.shadowBlur = scoreVal === '--' ? 0 : 6
+  ctx.fillText(`SCORE: ${scoreVal}`, textX, y)
+  if (data.scores.localEval !== '--') {
+    ctx.font = '11px monospace'
+    ctx.fillStyle = '#888'
+    ctx.shadowBlur = 0
+    ctx.fillText(`local: ${data.scores.localEval}`, textX + 140, y)
+  }
+  ctx.shadowBlur = 0
+  y += lineH
+
+  // Health section
+  ctx.font = 'bold 11px monospace'
+  ctx.fillStyle = '#777'
+  ctx.fillText('SERVICES', textX, y)
+  y += lineH - 2
+
+  const services = [
+    { label: 'API', up: data.health.apiServer },
+    { label: 'WS', up: data.health.webSocket },
+    { label: 'ORCH', up: data.health.orchestrator },
+    { label: 'REACT', up: data.health.reactor },
+  ]
+
+  ctx.font = '11px monospace'
+  const dotSpacing = (panelW - pad * 2) / services.length
+  for (let i = 0; i < services.length; i++) {
+    const s = services[i]
+    const sx = textX + i * dotSpacing
+    // Dot
+    ctx.fillStyle = s.up ? '#00ff88' : '#ff3344'
+    if (s.up) {
+      ctx.shadowColor = '#00ff88'
+      ctx.shadowBlur = 4
+    }
+    ctx.beginPath()
+    ctx.arc(sx + 6, y - 3, 3.5, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    // Label
+    ctx.fillStyle = s.up ? '#aaa' : '#666'
+    ctx.fillText(s.label, sx + 14, y)
+  }
+  y += lineH
+
+  // Training section
+  if (data.training.length > 0) {
+    ctx.font = 'bold 11px monospace'
+    ctx.fillStyle = '#777'
+    ctx.fillText('TRAINING', textX, y)
+    y += lineH - 2
+
+    for (const t of data.training) {
+      const progress = t.totalEpochs > 0 ? t.epoch / t.totalEpochs : 0
+      const barW = panelW - pad * 2 - 100
+      const barH = 8
+      const barX = textX + 68
+
+      // Label
+      ctx.font = '10px monospace'
+      const nodeColor = NODE_HUD_COLORS[t.node] || '#aaa'
+      ctx.fillStyle = nodeColor
+      const label = t.name.length > 8 ? t.name.slice(0, 8) : t.name
+      ctx.fillText(label, textX, y)
+
+      // Progress bar background
+      const barY = y - 7
+      ctx.fillStyle = '#1a1a2e'
+      ctx.fillRect(barX, barY, barW, barH)
+
+      // Progress bar fill
+      const fillColor = t.status === 'running' ? nodeColor : '#444'
+      ctx.fillStyle = fillColor
+      ctx.shadowColor = fillColor
+      ctx.shadowBlur = t.status === 'running' ? 3 : 0
+      ctx.fillRect(barX, barY, barW * progress, barH)
+      ctx.shadowBlur = 0
+
+      // Border
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)'
+      ctx.lineWidth = 1
+      ctx.strokeRect(barX, barY, barW, barH)
+
+      // Epoch text
+      ctx.fillStyle = '#888'
+      ctx.font = '10px monospace'
+      ctx.fillText(`${t.epoch}/${t.totalEpochs}`, barX + barW + 6, y)
+
+      y += lineH
+    }
+  }
+
+  // Experiments section
+  if (data.experiments.length > 0) {
+    ctx.font = 'bold 11px monospace'
+    ctx.fillStyle = '#777'
+    ctx.fillText('EXPERIMENTS', textX, y)
+    y += lineH - 2
+
+    ctx.font = '10px monospace'
+    for (const exp of data.experiments.slice(0, 3)) {
+      const statusColor = exp.status === 'running' ? '#00e5ff'
+        : exp.status === 'completed' ? '#00ff88'
+        : exp.status === 'failed' ? '#ff3344'
+        : '#ff8844'
+      const statusIcon = exp.status === 'running' ? '\u25B6'
+        : exp.status === 'completed' ? '\u2713'
+        : exp.status === 'failed' ? '\u2717'
+        : '\u25CB'
+      ctx.fillStyle = statusColor
+      ctx.fillText(statusIcon, textX, y)
+      ctx.fillStyle = '#aaa'
+      const expName = exp.name.length > 22 ? exp.name.slice(0, 22) + '..' : exp.name
+      ctx.fillText(expName, textX + 14, y)
+      y += lineH
+    }
+  }
+
+  ctx.restore()
+
+  // ── Event ticker at bottom ──────────────────────────────────
+  if (data.recentEvents.length > 0) {
+    const tickerH = 22
+    const tickerY = canvasHeight - tickerH - 4
+
+    ctx.save()
+
+    // Ticker background
+    ctx.fillStyle = 'rgba(8, 4, 20, 0.8)'
+    ctx.fillRect(0, tickerY, canvasWidth, tickerH)
+
+    // Top border line
+    ctx.strokeStyle = 'rgba(0, 229, 255, 0.3)'
+    ctx.lineWidth = 1
+    ctx.beginPath()
+    ctx.moveTo(0, tickerY)
+    ctx.lineTo(canvasWidth, tickerY)
+    ctx.stroke()
+
+    // Build ticker text
+    const tickerText = data.recentEvents
+      .map((e) => {
+        const sev = e.severity === 'error' ? '\u2717' : e.severity === 'warning' ? '\u26A0' : '\u25C6'
+        return `${sev} ${e.title}`
+      })
+      .join('     ')
+
+    ctx.font = '12px monospace'
+    ctx.fillStyle = '#00e5ff'
+    ctx.globalAlpha = 0.85
+
+    const textWidth = ctx.measureText(tickerText).width
+    const totalScroll = textWidth + canvasWidth
+
+    // Scroll
+    eventTickerOffset = (eventTickerOffset + 0.6) % totalScroll
+
+    const drawX = canvasWidth - eventTickerOffset
+    ctx.fillText(tickerText, drawX, tickerY + tickerH * 0.72)
+
+    ctx.restore()
+  }
+}
+
 export function renderFrame(
   ctx: CanvasRenderingContext2D,
   canvasWidth: number,

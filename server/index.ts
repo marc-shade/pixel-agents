@@ -29,6 +29,7 @@ import type { AgentState } from '../src/types.js';
 
 import { SessionScanner, loadClusterNodes, type SessionInfo } from './sessionScanner.js';
 import { RemoteWatcher } from './remoteWatcher.js';
+import { startArcLabMonitor, stopArcLabMonitor, getArcLabStatus } from './arcLabMonitor.js';
 
 // ── Configuration ──────────────────────────────────────────────
 
@@ -349,6 +350,10 @@ function sendAllAssetsToClient(ws: WebSocket): void {
 			send({ type: 'agentStatus', id: agentId, status: 'waiting' });
 		}
 	}
+
+	// ARC-AGI-3 lab status
+	const arcStatus = getArcLabStatus();
+	send({ type: 'arcLabStatus', ...arcStatus });
 }
 
 // ── Agent lifecycle ────────────────────────────────────────────
@@ -614,6 +619,11 @@ async function main(): Promise<void> {
 	});
 	scanner.start();
 
+	// Start ARC-AGI-3 lab monitor
+	startArcLabMonitor((status) => {
+		broadcast.postMessage({ type: 'arcLabStatus', ...status });
+	});
+
 	// Start stale agent cleanup
 	setInterval(checkStaleAgents, STALE_CHECK_INTERVAL_MS);
 
@@ -659,6 +669,7 @@ async function main(): Promise<void> {
 	const shutdown = () => {
 		console.log('\n[pixel-agents] Shutting down...');
 		scanner.stop();
+		stopArcLabMonitor();
 		if (remoteNodeScanTimer) clearInterval(remoteNodeScanTimer);
 		layoutWatcher?.dispose();
 		for (const id of [...agents.keys()]) {

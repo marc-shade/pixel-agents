@@ -57,6 +57,42 @@ const NODE_ROOM_MAP: Record<string, string> = {
   'macpro51': 'bottom-right',
 }
 
+export interface ArcLabStatus {
+  health: {
+    apiServer: boolean
+    webSocket: boolean
+    orchestrator: boolean
+    reactor: boolean
+  }
+  experiments: Array<{
+    id: number
+    name: string
+    type: string
+    status: string
+    startedAt: string
+  }>
+  recentEvents: Array<{
+    id: number
+    category: string
+    severity: string
+    title: string
+    timestamp: string
+    source: string
+  }>
+  scores: {
+    liveScore: string
+    localEval: string
+    blackBoxEval: string
+  }
+  training: Array<{
+    name: string
+    node: string
+    epoch: number
+    totalEpochs: number
+    status: string
+  }>
+}
+
 export interface ExtensionMessageState {
   agents: number[]
   selectedAgent: number | null
@@ -67,6 +103,7 @@ export interface ExtensionMessageState {
   subagentCharacters: SubagentCharacter[]
   layoutReady: boolean
   loadedAssets?: { catalog: FurnitureAsset[]; sprites: Record<string, string[][]> }
+  arcLabStatus: ArcLabStatus | null
 }
 
 function saveAgentSeats(os: OfficeState): void {
@@ -92,6 +129,7 @@ export function useExtensionMessages(
   const [subagentCharacters, setSubagentCharacters] = useState<SubagentCharacter[]>([])
   const [layoutReady, setLayoutReady] = useState(false)
   const [loadedAssets, setLoadedAssets] = useState<{ catalog: FurnitureAsset[]; sprites: Record<string, string[][]> } | undefined>()
+  const [arcLabStatus, setArcLabStatus] = useState<ArcLabStatus | null>(null)
 
   // Track whether initial layout has been loaded (ref to avoid re-render)
   const layoutReadyRef = useRef(false)
@@ -387,6 +425,14 @@ export function useExtensionMessages(
         } catch (err) {
           console.error(`❌ Webview: Error processing furnitureAssetsLoaded:`, err)
         }
+      } else if (msg.type === 'arcLabStatus') {
+        setArcLabStatus({
+          health: msg.health as ArcLabStatus['health'],
+          experiments: (msg.experiments || []) as ArcLabStatus['experiments'],
+          recentEvents: (msg.recentEvents || []) as ArcLabStatus['recentEvents'],
+          scores: msg.scores as ArcLabStatus['scores'],
+          training: (msg.training || []) as ArcLabStatus['training'],
+        })
       }
     }
     window.addEventListener('message', handler)
@@ -394,5 +440,5 @@ export function useExtensionMessages(
     return () => window.removeEventListener('message', handler)
   }, [getOfficeState])
 
-  return { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets }
+  return { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets, arcLabStatus }
 }
