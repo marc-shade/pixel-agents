@@ -14,6 +14,10 @@ import {
   SEAT_REST_MAX_SEC,
 } from '../../constants.js'
 
+// Pet-specific wander timing (more frequent movement)
+const PET_WANDER_PAUSE_MIN_SEC = 0.5
+const PET_WANDER_PAUSE_MAX_SEC = 3.0
+
 /** Tools that show reading animation instead of typing */
 const READING_TOOLS = new Set(['Read', 'Grep', 'Glob', 'WebFetch', 'WebSearch'])
 
@@ -75,6 +79,8 @@ export function createCharacter(
     seatTimer: 0,
     isSubagent: false,
     parentAgentId: null,
+    isPet: false,
+    petType: null,
     matrixEffect: null,
     matrixEffectTimer: 0,
     matrixEffectSeeds: [],
@@ -107,7 +113,9 @@ export function updateCharacter(
         ch.state = CharacterState.IDLE
         ch.frame = 0
         ch.frameTimer = 0
-        ch.wanderTimer = randomRange(WANDER_PAUSE_MIN_SEC, WANDER_PAUSE_MAX_SEC)
+        const wMin = ch.isPet ? PET_WANDER_PAUSE_MIN_SEC : WANDER_PAUSE_MIN_SEC
+        const wMax = ch.isPet ? PET_WANDER_PAUSE_MAX_SEC : WANDER_PAUSE_MAX_SEC
+        ch.wanderTimer = randomRange(wMin, wMax)
         ch.wanderCount = 0
         ch.wanderLimit = randomInt(WANDER_MOVES_BEFORE_REST_MIN, WANDER_MOVES_BEFORE_REST_MAX)
       }
@@ -118,6 +126,25 @@ export function updateCharacter(
       // No idle animation — static pose
       ch.frame = 0
       if (ch.seatTimer < 0) ch.seatTimer = 0 // clear turn-end sentinel
+      // Pets never become active or return to seats
+      if (ch.isPet) {
+        ch.wanderTimer -= dt
+        if (ch.wanderTimer <= 0) {
+          if (walkableTiles.length > 0) {
+            const target = walkableTiles[Math.floor(Math.random() * walkableTiles.length)]
+            const path = findPath(ch.tileCol, ch.tileRow, target.col, target.row, tileMap, blockedTiles)
+            if (path.length > 0) {
+              ch.path = path
+              ch.moveProgress = 0
+              ch.state = CharacterState.WALK
+              ch.frame = 0
+              ch.frameTimer = 0
+            }
+          }
+          ch.wanderTimer = randomRange(PET_WANDER_PAUSE_MIN_SEC, PET_WANDER_PAUSE_MAX_SEC)
+        }
+        break
+      }
       // If became active, pathfind to seat
       if (ch.isActive) {
         if (!ch.seatId) {
@@ -229,7 +256,10 @@ export function updateCharacter(
             }
           }
           ch.state = CharacterState.IDLE
-          ch.wanderTimer = randomRange(WANDER_PAUSE_MIN_SEC, WANDER_PAUSE_MAX_SEC)
+          ch.wanderTimer = randomRange(
+            ch.isPet ? PET_WANDER_PAUSE_MIN_SEC : WANDER_PAUSE_MIN_SEC,
+            ch.isPet ? PET_WANDER_PAUSE_MAX_SEC : WANDER_PAUSE_MAX_SEC,
+          )
         }
         ch.frame = 0
         ch.frameTimer = 0

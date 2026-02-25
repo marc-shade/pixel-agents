@@ -87,6 +87,15 @@ function handleStatic(req: IncomingMessage, res: ServerResponse): void {
 const clients = new Set<WebSocket>();
 const agents = new Map<number, AgentState>();
 const agentNodeNames = new Map<number, string>();
+const agentProjectNames = new Map<number, string>();
+
+/** Node color palette for frontend badges */
+const NODE_COLORS: Record<string, string> = {
+	'mac-studio': '#00ffff',   // cyan (orchestrator)
+	'macbook-air': '#00ff88',  // green (researcher)
+	'macmini': '#ff00ff',      // magenta (developer)
+	'macpro51': '#ffaa00',     // amber (builder)
+};
 const fileWatchers = new Map<number, fs.FSWatcher>();
 const pollingTimers = new Map<number, ReturnType<typeof setInterval>>();
 const waitingTimers = new Map<number, ReturnType<typeof setTimeout>>();
@@ -217,7 +226,22 @@ function sendAllAssetsToClient(ws: WebSocket): void {
 	// agents in pendingAgents, and layoutLoaded drains the buffer via os.addAgent().
 	const agentIds = [...agents.keys()].sort((a, b) => a - b);
 	const seats = loadSeats();
-	send({ type: 'existingAgents', agents: agentIds, agentMeta: seats });
+
+	// Build per-agent metadata for frontend (node name, project name, node color)
+	const agentMetaMap: Record<number, Record<string, unknown>> = {};
+	for (const id of agentIds) {
+		const nodeName = agentNodeNames.get(id) || 'unknown';
+		const projectName = agentProjectNames.get(id) || 'unknown';
+		const seatData = (seats as Record<string, any>)[String(id)];
+		agentMetaMap[id] = {
+			...seatData,
+			nodeName,
+			projectName,
+			nodeColor: NODE_COLORS[nodeName] || '#888888',
+		};
+	}
+
+	send({ type: 'existingAgents', agents: agentIds, agentMeta: agentMetaMap });
 
 	// Layout (triggers agent spawning from buffer)
 	const layout = readLayoutFromFile() || cachedDefaultLayout || null;
@@ -263,9 +287,12 @@ function createLocalAgent(session: SessionInfo): void {
 
 	agents.set(id, agent);
 	agentNodeNames.set(id, session.node.name);
+	agentProjectNames.set(id, session.projectName);
 
-	console.log(`[pixel-agents] Agent ${id} [${session.node.name}]: ${session.projectName} (local)`);
-	broadcast.postMessage({ type: 'agentCreated', id });
+	const nodeName = session.node.name;
+	const nodeColor = NODE_COLORS[nodeName] || '#888888';
+	console.log(`[pixel-agents] Agent ${id} [${nodeName}]: ${session.projectName} (local)`);
+	broadcast.postMessage({ type: 'agentCreated', id, nodeName, projectName: session.projectName, nodeColor });
 
 	startFileWatching(
 		id, session.jsonlFile,
@@ -295,9 +322,12 @@ function createRemoteAgent(session: SessionInfo): void {
 
 	agents.set(id, agent);
 	agentNodeNames.set(id, session.node.name);
+	agentProjectNames.set(id, session.projectName);
 
-	console.log(`[pixel-agents] Agent ${id} [${session.node.name}]: ${session.projectName} (remote)`);
-	broadcast.postMessage({ type: 'agentCreated', id });
+	const nodeName = session.node.name;
+	const nodeColor = NODE_COLORS[nodeName] || '#888888';
+	console.log(`[pixel-agents] Agent ${id} [${nodeName}]: ${session.projectName} (remote)`);
+	broadcast.postMessage({ type: 'agentCreated', id, nodeName, projectName: session.projectName, nodeColor });
 
 	// Watch via SSH tail — streams JSONL lines directly to the transcript parser
 	const watcher = new RemoteWatcher({
@@ -337,6 +367,7 @@ function removeAgent(agentId: number): void {
 
 	agents.delete(agentId);
 	agentNodeNames.delete(agentId);
+	agentProjectNames.delete(agentId);
 
 	broadcast.postMessage({ type: 'agentClosed', id: agentId });
 }

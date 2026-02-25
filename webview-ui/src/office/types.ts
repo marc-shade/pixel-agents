@@ -187,6 +187,10 @@ export interface Character {
   isSubagent: boolean
   /** Parent agent ID if this is a sub-agent, null otherwise */
   parentAgentId: number | null
+  /** Whether this character is a pet (always wanders, no seat, no labels) */
+  isPet: boolean
+  /** Pet type identifier (e.g., 'cat', 'corgi'), null if not a pet */
+  petType: string | null
   /** Active matrix spawn/despawn effect, or null */
   matrixEffect: 'spawn' | 'despawn' | null
   /** Timer counting up from 0 to MATRIX_EFFECT_DURATION */

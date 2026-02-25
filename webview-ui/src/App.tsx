@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { OfficeState } from './office/engine/officeState.js'
 import { OfficeCanvas } from './office/components/OfficeCanvas.js'
 import { ToolOverlay } from './office/components/ToolOverlay.js'
@@ -14,6 +14,7 @@ import { useEditorKeyboard } from './hooks/useEditorKeyboard.js'
 import { ZoomControls } from './components/ZoomControls.js'
 import { BottomToolbar } from './components/BottomToolbar.js'
 import { DebugView } from './components/DebugView.js'
+import { AgentLabels } from './components/AgentLabels.js'
 
 // Game state lives outside React — updated imperatively by message handlers
 const officeStateRef = { current: null as OfficeState | null }
@@ -121,7 +122,18 @@ function App() {
 
   const isEditDirty = useCallback(() => editor.isEditMode && editor.isDirty, [editor.isEditMode, editor.isDirty])
 
-  const { agents, selectedAgent, agentTools, agentStatuses, subagentTools, subagentCharacters, layoutReady, loadedAssets } = useExtensionMessages(getOfficeState, editor.setLastSavedLayout, isEditDirty)
+  const { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets } = useExtensionMessages(getOfficeState, editor.setLastSavedLayout, isEditDirty)
+
+  // Spawn pets once when layout is ready
+  const petsSpawned = useRef(false)
+  useEffect(() => {
+    if (layoutReady && !petsSpawned.current) {
+      petsSpawned.current = true
+      const os = getOfficeState()
+      os.addPet('cat')
+      os.addPet('corgi')
+    }
+  }, [layoutReady])
 
   const [isDebugMode, setIsDebugMode] = useState(false)
 
@@ -283,6 +295,17 @@ function App() {
           />
         )
       })()}
+
+      <AgentLabels
+        officeState={officeState}
+        agents={agents}
+        agentStatuses={agentStatuses}
+        agentMeta={agentMeta}
+        containerRef={containerRef}
+        zoom={editor.zoom}
+        panRef={editor.panRef}
+        subagentCharacters={subagentCharacters}
+      />
 
       <ToolOverlay
         officeState={officeState}

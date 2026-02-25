@@ -35,11 +35,18 @@ export interface FurnitureAsset {
   backgroundTiles?: number
 }
 
+export interface AgentMeta {
+  nodeName: string
+  projectName: string
+  nodeColor: string
+}
+
 export interface ExtensionMessageState {
   agents: number[]
   selectedAgent: number | null
   agentTools: Record<number, ToolActivity[]>
   agentStatuses: Record<number, string>
+  agentMeta: Record<number, AgentMeta>
   subagentTools: Record<number, Record<string, ToolActivity[]>>
   subagentCharacters: SubagentCharacter[]
   layoutReady: boolean
@@ -49,7 +56,7 @@ export interface ExtensionMessageState {
 function saveAgentSeats(os: OfficeState): void {
   const seats: Record<number, { palette: number; hueShift: number; seatId: string | null }> = {}
   for (const ch of os.characters.values()) {
-    if (ch.isSubagent) continue
+    if (ch.isSubagent || ch.isPet) continue
     seats[ch.id] = { palette: ch.palette, hueShift: ch.hueShift, seatId: ch.seatId }
   }
   vscode.postMessage({ type: 'saveAgentSeats', seats })
@@ -65,6 +72,7 @@ export function useExtensionMessages(
   const [agentTools, setAgentTools] = useState<Record<number, ToolActivity[]>>({})
   const [agentStatuses, setAgentStatuses] = useState<Record<number, string>>({})
   const [subagentTools, setSubagentTools] = useState<Record<number, Record<string, ToolActivity[]>>>({})
+  const [agentMeta, setAgentMeta] = useState<Record<number, AgentMeta>>({})
   const [subagentCharacters, setSubagentCharacters] = useState<SubagentCharacter[]>([])
   const [layoutReady, setLayoutReady] = useState(false)
   const [loadedAssets, setLoadedAssets] = useState<{ catalog: FurnitureAsset[]; sprites: Record<string, string[][]> } | undefined>()
@@ -109,12 +117,24 @@ export function useExtensionMessages(
         const id = msg.id as number
         setAgents((prev) => (prev.includes(id) ? prev : [...prev, id]))
         setSelectedAgent(id)
+        if (msg.nodeName) {
+          setAgentMeta((prev) => ({
+            ...prev,
+            [id]: { nodeName: msg.nodeName as string, projectName: msg.projectName as string, nodeColor: msg.nodeColor as string },
+          }))
+        }
         os.addAgent(id)
         saveAgentSeats(os)
       } else if (msg.type === 'agentClosed') {
         const id = msg.id as number
         setAgents((prev) => prev.filter((a) => a !== id))
         setSelectedAgent((prev) => (prev === id ? null : prev))
+        setAgentMeta((prev) => {
+          if (!(id in prev)) return prev
+          const next = { ...prev }
+          delete next[id]
+          return next
+        })
         setAgentTools((prev) => {
           if (!(id in prev)) return prev
           const next = { ...prev }
@@ -139,11 +159,18 @@ export function useExtensionMessages(
         os.removeAgent(id)
       } else if (msg.type === 'existingAgents') {
         const incoming = msg.agents as number[]
-        const meta = (msg.agentMeta || {}) as Record<number, { palette?: number; hueShift?: number; seatId?: string }>
+        const meta = (msg.agentMeta || {}) as Record<number, { palette?: number; hueShift?: number; seatId?: string; nodeName?: string; projectName?: string; nodeColor?: string }>
         // Buffer agents — they'll be added in layoutLoaded after seats are built
+        const newMeta: Record<number, AgentMeta> = {}
         for (const id of incoming) {
           const m = meta[id]
           pendingAgents.push({ id, palette: m?.palette, hueShift: m?.hueShift, seatId: m?.seatId })
+          if (m?.nodeName) {
+            newMeta[id] = { nodeName: m.nodeName, projectName: m.projectName || 'unknown', nodeColor: m.nodeColor || '#888888' }
+          }
+        }
+        if (Object.keys(newMeta).length > 0) {
+          setAgentMeta((prev) => ({ ...prev, ...newMeta }))
         }
         setAgents((prev) => {
           const ids = new Set(prev)
@@ -348,5 +375,5 @@ export function useExtensionMessages(
     return () => window.removeEventListener('message', handler)
   }, [getOfficeState])
 
-  return { agents, selectedAgent, agentTools, agentStatuses, subagentTools, subagentCharacters, layoutReady, loadedAssets }
+  return { agents, selectedAgent, agentTools, agentStatuses, agentMeta, subagentTools, subagentCharacters, layoutReady, loadedAssets }
 }

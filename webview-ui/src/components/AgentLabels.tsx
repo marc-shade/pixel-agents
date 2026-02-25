@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import type { OfficeState } from '../office/engine/officeState.js'
-import type { SubagentCharacter } from '../hooks/useExtensionMessages.js'
+import type { SubagentCharacter, AgentMeta } from '../hooks/useExtensionMessages.js'
 import { TILE_SIZE, CharacterState } from '../office/types.js'
 
 interface AgentLabelsProps {
   officeState: OfficeState
   agents: number[]
   agentStatuses: Record<number, string>
+  agentMeta: Record<number, AgentMeta>
   containerRef: React.RefObject<HTMLDivElement | null>
   zoom: number
   panRef: React.RefObject<{ x: number; y: number }>
@@ -17,6 +18,7 @@ export function AgentLabels({
   officeState,
   agents,
   agentStatuses,
+  agentMeta,
   containerRef,
   zoom,
   panRef,
@@ -78,7 +80,20 @@ export function AgentLabels({
           dotColor = 'var(--vscode-charts-blue, #3794ff)'
         }
 
-        const labelText = subLabelMap.get(id) || `Agent #${id}`
+        const meta = agentMeta[id]
+        const subLabel = subLabelMap.get(id)
+        // Show project name (last 2 path segments) or fallback
+        let labelText: string
+        if (subLabel) {
+          labelText = subLabel
+        } else if (meta?.projectName) {
+          const parts = meta.projectName.split('/').filter(Boolean)
+          labelText = parts.length > 1 ? parts.slice(-2).join('/') : parts[parts.length - 1] || `Agent #${id}`
+        } else {
+          labelText = `Agent #${id}`
+        }
+        const nodeColor = meta?.nodeColor || '#888888'
+        const nodeName = meta?.nodeName
 
         return (
           <div
@@ -107,22 +122,40 @@ export function AgentLabels({
                 }}
               />
             )}
-            <span
-              style={{
-                fontSize: isSub ? '16px' : '18px',
-                fontStyle: isSub ? 'italic' : undefined,
-                color: 'var(--vscode-foreground)',
-                background: 'rgba(30,30,46,0.7)',
-                padding: '1px 4px',
-                borderRadius: 2,
-                whiteSpace: 'nowrap',
-                maxWidth: isSub ? 120 : undefined,
-                overflow: isSub ? 'hidden' : undefined,
-                textOverflow: isSub ? 'ellipsis' : undefined,
-              }}
-            >
-              {labelText}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+              {nodeName && !isSub && (
+                <span
+                  style={{
+                    fontSize: '14px',
+                    color: '#000',
+                    background: nodeColor,
+                    padding: '0px 3px',
+                    borderRadius: 2,
+                    fontWeight: 'bold',
+                    lineHeight: '16px',
+                  }}
+                >
+                  {nodeName.split('-').map(w => w[0]).join('').toUpperCase()}
+                </span>
+              )}
+              <span
+                style={{
+                  fontSize: isSub ? '16px' : '18px',
+                  fontStyle: isSub ? 'italic' : undefined,
+                  color: 'var(--vscode-foreground)',
+                  background: 'rgba(10,6,18,0.85)',
+                  padding: '1px 4px',
+                  borderRadius: 2,
+                  borderLeft: `2px solid ${nodeColor}`,
+                  whiteSpace: 'nowrap',
+                  maxWidth: isSub ? 120 : 180,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {labelText}
+              </span>
+            </div>
           </div>
         )
       })}

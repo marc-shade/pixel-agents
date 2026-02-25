@@ -1120,3 +1120,289 @@ export function getCharacterSprites(paletteIndex: number, hueShift = 0): Charact
   spriteCache.set(cacheKey, sprites)
   return sprites
 }
+
+// ════════════════════════════════════════════════════════════════
+// Pet sprites (cat + corgi) — 16x16 canvases, smaller than humans
+// ════════════════════════════════════════════════════════════════
+
+function petWalkFrames(
+  standing: SpriteData,
+  legStart: number,
+  legsA: string[][],
+  legsB: string[][],
+): [SpriteData, SpriteData, SpriteData, SpriteData] {
+  const makeFrame = (legs: string[][]): SpriteData =>
+    standing.map((row, i) =>
+      i >= legStart && i < legStart + legs.length ? legs[i - legStart] : [...row]
+    )
+  const stand = standing.map((r) => [...r])
+  return [makeFrame(legsA), stand, makeFrame(legsB), stand]
+}
+
+function petIdleSprites(standing: SpriteData): [SpriteData, SpriteData] {
+  const s = standing.map((r) => [...r])
+  return [s, s]
+}
+
+// ── Cat sprites (white body, black outline, orange ears, blue collar) ──
+const catL = '#333333' // outline black
+const catO = '#E8E8F0' // body white/light gray
+const catD = '#6B4422' // dark tail/markings
+const catW = '#FFFFFF' // white chest
+const catG = '#333333' // eyes dark
+const catN = '#FF8899' // pink nose
+const catI = '#E07030' // inner ear orange
+const catC = '#4488CC' // blue collar
+
+const CAT_DOWN_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,catL,_,_,_,_,_,_,catL,_,_,_,_],
+  [_,_,_,catL,catI,catL,_,_,catL,catI,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catO,catL,catL,catO,catO,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catG,catO,catO,catG,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catW,catN,catW,catO,catO,catL,_,_,_,_],
+  [_,_,_,_,catL,catC,catC,catC,catC,catC,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catW,catW,catW,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,_,catL,catO,catL,_,_,catL,catO,catL,_,_,_,_],
+  [_,_,_,_,_,catL,_,_,_,_,_,catL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,catL,catD,catL,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+const CAT_UP_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,catL,_,_,_,_,_,_,catL,_,_,_,_],
+  [_,_,_,catL,catO,catL,_,_,catL,catO,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catO,catL,catL,catO,catO,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,_,catL,catC,catC,catC,catC,catC,catL,_,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catL,_,_,_,_],
+  [_,_,_,_,catL,catO,catL,_,_,catL,catO,catL,_,_,_,_],
+  [_,_,_,_,_,catL,_,_,_,_,_,catL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,catL,catD,catL,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+const CAT_RIGHT_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,catL,catI,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,_,catL,catO,catO,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,catL,catO,catO,catG,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,catL,catO,catW,catN,catL,_,_,_,_,_],
+  [_,_,_,_,_,catL,catC,catC,catC,catC,catL,_,_,_,_,_],
+  [_,_,catL,catD,catL,catO,catO,catO,catO,catL,_,_,_,_,_,_],
+  [_,_,_,catL,_,catL,catO,catW,catO,catO,catL,_,_,_,_,_],
+  [_,_,_,_,_,catL,catO,catO,catO,catO,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,catL,catO,catL,catO,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,_,catL,_,_,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+// ── Corgi sprites (outlined, matching reference style) ─────────
+const corL = '#5C3310' // outline dark brown
+const corO = '#E89840' // body orange
+const corW = '#FFF0D8' // cream/white chest
+const corP = '#E87898' // pink (ears, tongue)
+const corE = '#332211' // eyes dark
+const corN = '#332211' // nose dark
+
+const CORGI_DOWN_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,corL,corL,_,_,_,_,_,_,corL,corL,_,_,_],
+  [_,_,_,corL,corO,corL,_,_,_,corL,corO,corL,_,_,_,_],
+  [_,_,_,corL,corP,corO,corL,corL,corO,corP,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corE,corW,corW,corW,corE,corO,corL,_,_,_,_],
+  [_,_,_,_,corL,corW,corW,corN,corW,corW,corL,_,_,_,_,_],
+  [_,_,_,_,_,corL,corW,corP,corW,corL,_,_,_,_,_,_],
+  [_,_,corL,corO,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_],
+  [_,_,corL,corO,corO,corO,corW,corW,corW,corO,corO,corO,corL,_,_,_],
+  [_,_,_,corL,corO,corO,corW,corW,corW,corO,corO,corL,_,_,_,_],
+  [_,_,_,_,corL,corO,corL,_,_,corL,corO,corL,_,_,_,_],
+  [_,_,_,_,_,corL,_,_,_,_,_,corL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+const CORGI_UP_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,corL,corL,_,_,_,_,_,_,corL,corL,_,_,_],
+  [_,_,_,corL,corO,corL,_,_,_,corL,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corO,corL,corL,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,_,corL,corO,corO,corO,corO,corO,corL,_,_,_,_,_],
+  [_,_,_,_,_,corL,corO,corO,corO,corL,_,_,_,_,_,_],
+  [_,_,corL,corO,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_],
+  [_,_,corL,corO,corO,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,_,corL,corO,corL,_,_,corL,corO,corL,_,_,_,_],
+  [_,_,_,_,_,corL,_,_,_,_,_,corL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+const CORGI_RIGHT_STAND: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,corL,corL,_,_,_],
+  [_,_,_,_,_,_,_,_,_,corL,corP,corO,corL,_,_,_],
+  [_,_,_,_,_,_,_,_,corL,corO,corO,corO,corL,_,_,_],
+  [_,_,_,_,_,_,_,corL,corO,corW,corE,corO,corL,_,_,_],
+  [_,_,_,_,_,_,_,corL,corW,corW,corN,corL,_,_,_,_],
+  [_,_,_,_,_,corL,corO,corO,corO,corO,corL,_,_,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corO,corO,corO,corL,_,_,_,_,_],
+  [_,_,corL,corL,corO,corW,corW,corW,corO,corO,corL,_,_,_,_,_],
+  [_,_,_,_,corL,corO,corO,corO,corO,corL,_,_,_,_,_,_],
+  [_,_,_,_,_,corL,corO,_,corO,corL,_,_,_,_,_,_],
+  [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+// ── Pet sprite assembly ────────────────────────────────────────
+
+function buildPetSprites(
+  downStand: SpriteData,
+  upStand: SpriteData,
+  rightStand: SpriteData,
+  legRow: number,
+  downLegsA: string[][],
+  downLegsB: string[][],
+  upLegsA: string[][],
+  upLegsB: string[][],
+  rightLegsA: string[][],
+  rightLegsB: string[][],
+): CharacterSprites {
+  const flip = flipSpriteHorizontal
+  const downWalk = petWalkFrames(downStand, legRow, downLegsA, downLegsB)
+  const upWalk = petWalkFrames(upStand, legRow, upLegsA, upLegsB)
+  const rightWalk = petWalkFrames(rightStand, legRow, rightLegsA, rightLegsB)
+  const leftWalk: [SpriteData, SpriteData, SpriteData, SpriteData] = [
+    flip(rightWalk[0]), flip(rightWalk[1]), flip(rightWalk[2]), flip(rightWalk[3]),
+  ]
+  return {
+    walk: {
+      [Dir.DOWN]: downWalk,
+      [Dir.UP]: upWalk,
+      [Dir.RIGHT]: rightWalk,
+      [Dir.LEFT]: leftWalk,
+    } as Record<Direction, [SpriteData, SpriteData, SpriteData, SpriteData]>,
+    typing: {
+      [Dir.DOWN]: petIdleSprites(downStand),
+      [Dir.UP]: petIdleSprites(upStand),
+      [Dir.RIGHT]: petIdleSprites(rightStand),
+      [Dir.LEFT]: [flip(rightStand), flip(rightStand)] as [SpriteData, SpriteData],
+    } as Record<Direction, [SpriteData, SpriteData]>,
+    reading: {
+      [Dir.DOWN]: petIdleSprites(downStand),
+      [Dir.UP]: petIdleSprites(upStand),
+      [Dir.RIGHT]: petIdleSprites(rightStand),
+      [Dir.LEFT]: [flip(rightStand), flip(rightStand)] as [SpriteData, SpriteData],
+    } as Record<Direction, [SpriteData, SpriteData]>,
+  }
+}
+
+const petSpriteCache = new Map<string, CharacterSprites>()
+
+/** Get sprites for a pet character by type ('cat' or 'corgi') */
+export function getPetSprites(petType: string): CharacterSprites {
+  const cached = petSpriteCache.get(petType)
+  if (cached) return cached
+
+  let sprites: CharacterSprites
+
+  if (petType === 'cat') {
+    sprites = buildPetSprites(
+      CAT_DOWN_STAND, CAT_UP_STAND, CAT_RIGHT_STAND, 10,
+      // down legs A (spread)
+      [
+        [_,_,_,catL,catO,_,_,catL,_,_,_,catO,catL,_,_,_],
+        [_,_,_,_,catL,_,_,_,_,_,_,_,catL,catO,catL,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_],
+      ],
+      // down legs B (spread other way)
+      [
+        [_,_,_,_,catL,catO,catL,_,_,catL,catO,_,_,_,_,_],
+        [_,_,_,_,_,catL,_,_,_,_,catL,catO,catL,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_,_],
+      ],
+      // up legs A
+      [
+        [_,_,_,catL,catO,_,_,catL,_,_,_,catO,catL,_,_,_],
+        [_,_,_,_,catL,_,_,_,_,_,_,_,catL,catO,catL,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_],
+      ],
+      // up legs B
+      [
+        [_,_,_,_,catL,catO,catL,_,_,catL,catO,_,_,_,_,_],
+        [_,_,_,_,_,catL,_,_,_,_,catL,catO,catL,_,_,_],
+        [_,_,_,_,_,_,_,_,_,_,_,_,catL,_,_,_],
+      ],
+      // right legs A
+      [
+        [_,_,_,_,_,_,catL,catO,catL,catO,catL,_,_,_,_,_],
+        [_,_,_,_,_,_,_,catL,_,_,catL,_,_,_,_,_],
+      ],
+      // right legs B
+      [
+        [_,_,_,_,_,catL,catO,_,_,catO,catL,_,_,_,_,_],
+        [_,_,_,_,_,_,catL,_,catL,_,_,_,_,_,_,_],
+      ],
+    )
+  } else {
+    // corgi
+    sprites = buildPetSprites(
+      CORGI_DOWN_STAND, CORGI_UP_STAND, CORGI_RIGHT_STAND, 11,
+      // down legs A (spread)
+      [
+        [_,_,_,corL,corO,_,_,_,_,_,_,corO,corL,_,_,_],
+        [_,_,_,_,corL,_,_,_,_,_,_,_,corL,_,_,_],
+      ],
+      // down legs B (together)
+      [
+        [_,_,_,_,_,corO,corL,_,_,corL,corO,_,_,_,_,_],
+        [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
+      ],
+      // up legs A
+      [
+        [_,_,_,corL,corO,_,_,_,_,_,_,corO,corL,_,_,_],
+        [_,_,_,_,corL,_,_,_,_,_,_,_,corL,_,_,_],
+      ],
+      // up legs B
+      [
+        [_,_,_,_,_,corO,corL,_,_,corL,corO,_,_,_,_,_],
+        [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
+      ],
+      // right legs A
+      [
+        [_,_,_,_,_,corL,corO,_,corO,corL,_,_,_,_,_,_],
+        [_,_,_,_,_,_,corL,_,_,corL,_,_,_,_,_,_],
+      ],
+      // right legs B
+      [
+        [_,_,_,_,corL,corO,_,_,_,corO,corL,_,_,_,_,_],
+        [_,_,_,_,_,corL,_,_,_,_,corL,_,_,_,_,_],
+      ],
+    )
+  }
+
+  petSpriteCache.set(petType, sprites)
+  return sprites
+}

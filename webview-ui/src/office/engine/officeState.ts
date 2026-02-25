@@ -491,6 +491,25 @@ export class OfficeState {
     return this.subagentIdMap.get(`${parentAgentId}:${parentToolId}`) ?? null
   }
 
+  /** Spawn a pet character (always wanders, no seat, no label) */
+  addPet(petType: string): void {
+    const id = this.nextSubagentId-- // Use negative IDs (same pool as subagents)
+    const spawn = this.walkableTiles.length > 0
+      ? this.walkableTiles[Math.floor(Math.random() * this.walkableTiles.length)]
+      : { col: 1, row: 1 }
+    const ch = createCharacter(id, 0, null, null, 0)
+    ch.isPet = true
+    ch.petType = petType
+    ch.isActive = false
+    ch.state = CharacterState.IDLE
+    ch.wanderTimer = Math.random() * 2
+    ch.x = spawn.col * TILE_SIZE + TILE_SIZE / 2
+    ch.y = spawn.row * TILE_SIZE + TILE_SIZE / 2
+    ch.tileCol = spawn.col
+    ch.tileRow = spawn.row
+    this.characters.set(id, ch)
+  }
+
   setAgentActive(id: number, active: boolean): void {
     const ch = this.characters.get(id)
     if (ch) {
@@ -658,8 +677,8 @@ export class OfficeState {
   getCharacterAt(worldX: number, worldY: number): number | null {
     const chars = this.getCharacters().sort((a, b) => b.y - a.y)
     for (const ch of chars) {
-      // Skip characters that are despawning
-      if (ch.matrixEffect === 'despawn') continue
+      // Skip characters that are despawning or are pets
+      if (ch.matrixEffect === 'despawn' || ch.isPet) continue
       // Character sprite is 16x24, anchored bottom-center
       // Apply sitting offset to match visual position
       const sittingOffset = ch.state === CharacterState.TYPE ? CHARACTER_SITTING_OFFSET_PX : 0
