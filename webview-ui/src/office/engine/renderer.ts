@@ -1009,7 +1009,7 @@ export function renderMiniMap(
   const mapH = Math.round(mapW * (rows / cols))
   const margin = 10
   const mapX = margin
-  const mapY = canvasHeight - mapH - margin - 30 // above bottom toolbar
+  const mapY = canvasHeight - mapH - 36 // above event ticker strip (26px)
   const tileW = mapW / cols
   const tileH = mapH / rows
 
