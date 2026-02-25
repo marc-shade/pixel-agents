@@ -1,0 +1,108 @@
+{
+  "assets": [
+    {
+      "id": "desk-cyber",
+      "name": "desk-cyber",
+      "label": "Cyber Desk",
+      "category": "desks",
+      "file": "furniture/desk-cyber.png",
+      "width": 32,
+      "height": 32,
+      "footprintW": 2,
+      "footprintH": 1,
+      "isDesk": true,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "chair-cyber",
+      "name": "chair-cyber",
+      "label": "Holo Chair",
+      "category": "chairs",
+      "file": "furniture/chair-cyber.png",
+      "width": 16,
+      "height": 16,
+      "footprintW": 1,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "server-rack",
+      "name": "server-rack",
+      "label": "Server Rack",
+      "category": "tech",
+      "file": "furniture/server-rack.png",
+      "width": 16,
+      "height": 32,
+      "footprintW": 1,
+      "footprintH": 2,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "monitor-wall",
+      "name": "monitor-wall",
+      "label": "Wall Monitor",
+      "category": "tech",
+      "file": "furniture/monitor-wall.png",
+      "width": 32,
+      "height": 16,
+      "footprintW": 2,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": true
+    },
+    {
+      "id": "plant-neon",
+      "name": "plant-neon",
+      "label": "Neon Plant",
+      "category": "decor",
+      "file": "furniture/plant-neon.png",
+      "width": 16,
+      "height": 16,
+      "footprintW": 1,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "coffee-machine",
+      "name": "coffee-machine",
+      "label": "Coffee Bot",
+      "category": "appliances",
+      "file": "furniture/coffee-machine.png",
+      "width": 16,
+      "height": 16,
+      "footprintW": 1,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "couch-cyber",
+      "name": "couch-cyber",
+      "label": "Cyber Couch",
+      "category": "seating",
+      "file": "furniture/couch-cyber.png",
+      "width": 32,
+      "height": 16,
+      "footprintW": 2,
+      "footprintH": 1,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    },
+    {
+      "id": "bookshelf",
+      "name": "bookshelf",
+      "label": "Data Shelf",
+      "category": "storage",
+      "file": "furniture/bookshelf.png",
+      "width": 16,
+      "height": 32,
+      "footprintW": 1,
+      "footprintH": 2,
+      "isDesk": false,
+      "canPlaceOnWalls": false
+    }
+  ]
+}

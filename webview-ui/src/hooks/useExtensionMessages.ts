@@ -41,6 +41,14 @@ export interface AgentMeta {
   nodeColor: string
 }
 
+/** Map cluster node hostnames to office room quadrants */
+const NODE_ROOM_MAP: Record<string, string> = {
+  'mac-studio': 'top-left',
+  'macbook-air': 'top-right',
+  'macmini': 'bottom-left',
+  'macpro51': 'bottom-right',
+}
+
 export interface ExtensionMessageState {
   agents: number[]
   selectedAgent: number | null
@@ -82,7 +90,7 @@ export function useExtensionMessages(
 
   useEffect(() => {
     // Buffer agents from existingAgents until layout is loaded
-    let pendingAgents: Array<{ id: number; palette?: number; hueShift?: number; seatId?: string }> = []
+    let pendingAgents: Array<{ id: number; palette?: number; hueShift?: number; seatId?: string; nodeRoom?: string }> = []
 
     const handler = (e: MessageEvent) => {
       const msg = e.data
@@ -105,7 +113,7 @@ export function useExtensionMessages(
         }
         // Add buffered agents now that layout (and seats) are correct
         for (const p of pendingAgents) {
-          os.addAgent(p.id, p.palette, p.hueShift, p.seatId, true)
+          os.addAgent(p.id, p.palette, p.hueShift, p.seatId, true, p.nodeRoom)
         }
         pendingAgents = []
         layoutReadyRef.current = true
@@ -123,7 +131,8 @@ export function useExtensionMessages(
             [id]: { nodeName: msg.nodeName as string, projectName: msg.projectName as string, nodeColor: msg.nodeColor as string },
           }))
         }
-        os.addAgent(id)
+        const nodeRoom = msg.nodeName ? NODE_ROOM_MAP[msg.nodeName as string] : undefined
+        os.addAgent(id, undefined, undefined, undefined, undefined, nodeRoom)
         saveAgentSeats(os)
       } else if (msg.type === 'agentClosed') {
         const id = msg.id as number
@@ -164,7 +173,8 @@ export function useExtensionMessages(
         const newMeta: Record<number, AgentMeta> = {}
         for (const id of incoming) {
           const m = meta[id]
-          pendingAgents.push({ id, palette: m?.palette, hueShift: m?.hueShift, seatId: m?.seatId })
+          const nodeRoom = m?.nodeName ? NODE_ROOM_MAP[m.nodeName] : undefined
+          pendingAgents.push({ id, palette: m?.palette, hueShift: m?.hueShift, seatId: m?.seatId, nodeRoom })
           if (m?.nodeName) {
             newMeta[id] = { nodeName: m.nodeName, projectName: m.projectName || 'unknown', nodeColor: m.nodeColor || '#888888' }
           }

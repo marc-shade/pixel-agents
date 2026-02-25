@@ -18,6 +18,11 @@ import {
 const PET_WANDER_PAUSE_MIN_SEC = 0.5
 const PET_WANDER_PAUSE_MAX_SEC = 3.0
 
+// Pet sleep timing
+const PET_SLEEP_MIN_SEC = 8
+const PET_SLEEP_MAX_SEC = 15
+const SLEEP_FRAME_DURATION_SEC = 1.0
+
 /** Tools that show reading animation instead of typing */
 const READING_TOOLS = new Set(['Read', 'Grep', 'Glob', 'WebFetch', 'WebSearch'])
 
@@ -81,6 +86,7 @@ export function createCharacter(
     parentAgentId: null,
     isPet: false,
     petType: null,
+    sleepTimer: 0,
     matrixEffect: null,
     matrixEffectTimer: 0,
     matrixEffectSeeds: [],
@@ -130,6 +136,14 @@ export function updateCharacter(
       if (ch.isPet) {
         ch.wanderTimer -= dt
         if (ch.wanderTimer <= 0) {
+          // Check if pet has wandered enough — time for a nap
+          if (ch.wanderCount >= ch.wanderLimit) {
+            ch.state = CharacterState.SLEEP
+            ch.sleepTimer = randomRange(PET_SLEEP_MIN_SEC, PET_SLEEP_MAX_SEC)
+            ch.frame = 0
+            ch.frameTimer = 0
+            break
+          }
           if (walkableTiles.length > 0) {
             const target = walkableTiles[Math.floor(Math.random() * walkableTiles.length)]
             const path = findPath(ch.tileCol, ch.tileRow, target.col, target.row, tileMap, blockedTiles)
@@ -139,6 +153,7 @@ export function updateCharacter(
               ch.state = CharacterState.WALK
               ch.frame = 0
               ch.frameTimer = 0
+              ch.wanderCount++
             }
           }
           ch.wanderTimer = randomRange(PET_WANDER_PAUSE_MIN_SEC, PET_WANDER_PAUSE_MAX_SEC)
@@ -304,6 +319,25 @@ export function updateCharacter(
       }
       break
     }
+
+    case CharacterState.SLEEP: {
+      // Pet sleeping — slow breathing animation (2 frames)
+      ch.sleepTimer -= dt
+      if (ch.frameTimer >= SLEEP_FRAME_DURATION_SEC) {
+        ch.frameTimer -= SLEEP_FRAME_DURATION_SEC
+        ch.frame = (ch.frame + 1) % 2
+      }
+      // Wake up when sleep timer expires
+      if (ch.sleepTimer <= 0) {
+        ch.state = CharacterState.IDLE
+        ch.frame = 0
+        ch.frameTimer = 0
+        ch.wanderCount = 0
+        ch.wanderLimit = randomInt(WANDER_MOVES_BEFORE_REST_MIN, WANDER_MOVES_BEFORE_REST_MAX)
+        ch.wanderTimer = randomRange(PET_WANDER_PAUSE_MIN_SEC, PET_WANDER_PAUSE_MAX_SEC)
+      }
+      break
+    }
   }
 }
 
@@ -318,6 +352,11 @@ export function getCharacterSprite(ch: Character, sprites: CharacterSprites): Sp
     case CharacterState.WALK:
       return sprites.walk[ch.dir][ch.frame % 4]
     case CharacterState.IDLE:
+      return sprites.walk[ch.dir][1]
+    case CharacterState.SLEEP:
+      if (sprites.sleep) {
+        return sprites.sleep[ch.dir][ch.frame % 2]
+      }
       return sprites.walk[ch.dir][1]
     default:
       return sprites.walk[ch.dir][1]

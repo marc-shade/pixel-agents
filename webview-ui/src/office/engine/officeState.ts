@@ -159,7 +159,27 @@ export class OfficeState {
     return result
   }
 
-  private findFreeSeat(): string | null {
+  /** Room boundaries in tile coordinates (inclusive) */
+  static readonly ROOM_BOUNDS: Record<string, { minCol: number; maxCol: number; minRow: number; maxRow: number }> = {
+    'top-left':     { minCol: 0,  maxCol: 20, minRow: 0,  maxRow: 12 },
+    'top-right':    { minCol: 22, maxCol: 41, minRow: 0,  maxRow: 12 },
+    'bottom-left':  { minCol: 0,  maxCol: 20, minRow: 13, maxRow: 25 },
+    'bottom-right': { minCol: 22, maxCol: 41, minRow: 13, maxRow: 25 },
+  }
+
+  private findFreeSeat(nodeRoom?: string): string | null {
+    const bounds = nodeRoom ? OfficeState.ROOM_BOUNDS[nodeRoom] : null
+    // First pass: find seat in the requested room
+    if (bounds) {
+      for (const [uid, seat] of this.seats) {
+        if (!seat.assigned &&
+            seat.seatCol >= bounds.minCol && seat.seatCol <= bounds.maxCol &&
+            seat.seatRow >= bounds.minRow && seat.seatRow <= bounds.maxRow) {
+          return uid
+        }
+      }
+    }
+    // Fallback: any free seat
     for (const [uid, seat] of this.seats) {
       if (!seat.assigned) return uid
     }
@@ -193,7 +213,7 @@ export class OfficeState {
     return { palette, hueShift }
   }
 
-  addAgent(id: number, preferredPalette?: number, preferredHueShift?: number, preferredSeatId?: string, skipSpawnEffect?: boolean): void {
+  addAgent(id: number, preferredPalette?: number, preferredHueShift?: number, preferredSeatId?: string, skipSpawnEffect?: boolean, nodeRoom?: string): void {
     if (this.characters.has(id)) return
 
     let palette: number
@@ -216,7 +236,7 @@ export class OfficeState {
       }
     }
     if (!seatId) {
-      seatId = this.findFreeSeat()
+      seatId = this.findFreeSeat(nodeRoom)
     }
 
     let ch: Character

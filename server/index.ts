@@ -103,6 +103,99 @@ const permissionTimers = new Map<number, ReturnType<typeof setTimeout>>();
 const remoteWatchers = new Map<number, RemoteWatcher>();
 let nextAgentId = 1;
 
+// ── Remote node SSH detection (socket-based) ───────────────────
+
+interface RemoteNodeAgent {
+	id: number;
+	nodeName: string;
+}
+
+const REMOTE_NODES: { name: string; host: string; homePath: string }[] = [
+	{ name: 'macbook-air', host: 'macbook-air', homePath: '/Users/marc' },
+	{ name: 'macmini', host: 'macmini', homePath: '/Users/marc' },
+	{ name: 'macpro51', host: 'macpro51', homePath: '/home/marc' },
+];
+
+const remoteAgents = new Map<string, RemoteNodeAgent>(); // key: "hostname:socketName"
+let nextRemoteId = -1000;
+const sshFailedOnce = new Set<string>(); // track first-failure-per-host logging
+let remoteNodeScanTimer: ReturnType<typeof setInterval> | null = null;
+
+function scanRemoteNodes(): void {
+	for (const node of REMOTE_NODES) {
+		const idePath = `${node.homePath}/.claude/ide/`;
+		execFile('ssh', [
+			'-o', 'ConnectTimeout=2',
+			'-o', 'BatchMode=yes',
+			node.host,
+			`ls ${idePath} 2>/dev/null`,
+		], { timeout: 5000 }, (err, stdout) => {
+			if (err) {
+				if (!sshFailedOnce.has(node.name)) {
+					sshFailedOnce.add(node.name);
+					console.log(`[pixel-agents] SSH scan failed for ${node.name}: ${err.message}`);
+				}
+				return;
+			}
+
+			// On success, clear the failure flag so next failure gets logged
+			sshFailedOnce.delete(node.name);
+
+			const socketNames = stdout.trim().split('\n').filter(Boolean);
+			const currentKeys = new Set<string>();
+
+			for (const socketName of socketNames) {
+				const key = `${node.name}:${socketName}`;
+				currentKeys.add(key);
+
+				if (remoteAgents.has(key)) continue;
+
+				// New remote session detected
+				const id = nextRemoteId--;
+				remoteAgents.set(key, { id, nodeName: node.name });
+
+				// Extract a project name from the socket name, or fall back to the hostname
+				const projectName = socketName.replace(/\.sock$/, '').replace(/^\./, '') || node.name;
+				const nodeColor = NODE_COLORS[node.name] || '#888888';
+
+				// Create a minimal agent state so the frontend can render the agent
+				const agent: AgentState = {
+					id,
+					terminalRef: null as any,
+					projectDir: idePath,
+					jsonlFile: `${idePath}${socketName}`,
+					fileOffset: 0,
+					lineBuffer: '',
+					activeToolIds: new Set(),
+					activeToolStatuses: new Map(),
+					activeToolNames: new Map(),
+					activeSubagentToolIds: new Map(),
+					activeSubagentToolNames: new Map(),
+					isWaiting: false,
+					permissionSent: false,
+					hadToolsInTurn: false,
+				};
+				agents.set(id, agent);
+				agentNodeNames.set(id, node.name);
+				agentProjectNames.set(id, projectName);
+
+				console.log(`[pixel-agents] Remote agent ${id} [${node.name}]: ${projectName} (ssh-socket)`);
+				broadcast.postMessage({ type: 'agentCreated', id, nodeName: node.name, projectName, nodeColor });
+			}
+
+			// Detect disappeared sessions on this node
+			for (const [key, ra] of remoteAgents) {
+				if (!key.startsWith(`${node.name}:`)) continue;
+				if (!currentKeys.has(key)) {
+					console.log(`[pixel-agents] Remote agent ${ra.id} [${ra.nodeName}]: session ended (ssh-socket)`);
+					remoteAgents.delete(key);
+					removeAgent(ra.id);
+				}
+			}
+		});
+	}
+}
+
 // ── Persistence (file-based, replaces VS Code workspaceState) ──
 
 const SETTINGS_DIR = path.join(os.homedir(), '.pixel-agents');
@@ -377,8 +470,10 @@ function removeAgent(agentId: number): void {
 function checkStaleAgents(): void {
 	const now = Date.now();
 	for (const [id, agent] of agents) {
-		// Only check local agents — remote agents are managed by their SSH tail process
+		// Skip remote agents — SSH tail agents are managed by RemoteWatcher,
+		// SSH socket agents (negative IDs) are managed by scanRemoteNodes
 		if (remoteWatchers.has(id)) continue;
+		if (id <= -1000) continue;
 
 		try {
 			const stat = fs.statSync(agent.jsonlFile);
@@ -522,6 +617,10 @@ async function main(): Promise<void> {
 	// Start stale agent cleanup
 	setInterval(checkStaleAgents, STALE_CHECK_INTERVAL_MS);
 
+	// Start remote node SSH scanning (socket-based detection)
+	scanRemoteNodes(); // initial scan
+	remoteNodeScanTimer = setInterval(scanRemoteNodes, 10000);
+
 	// Create HTTP + WebSocket server
 	const server = createServer(handleStatic);
 	const wss = new WebSocketServer({ server, path: '/ws' });
@@ -560,6 +659,7 @@ async function main(): Promise<void> {
 	const shutdown = () => {
 		console.log('\n[pixel-agents] Shutting down...');
 		scanner.stop();
+		if (remoteNodeScanTimer) clearInterval(remoteNodeScanTimer);
 		layoutWatcher?.dispose();
 		for (const id of [...agents.keys()]) {
 			removeAgent(id);

@@ -107,14 +107,38 @@ export function renderScene(
   const drawables: ZDrawable[] = []
 
   // Furniture
+  const now = performance.now()
   for (const f of furniture) {
     const cached = getCachedSprite(f.sprite, zoom)
     const fx = offsetX + f.x * zoom
     const fy = offsetY + f.y * zoom
+    const isServerRack = f.type === 'server-rack'
     drawables.push({
       zY: f.zY,
       draw: (c) => {
         c.drawImage(cached, fx, fy)
+        // Blinking LEDs on server racks
+        if (isServerRack) {
+          const ledSize = Math.max(1, Math.round(2 * zoom))
+          const spriteW = f.sprite[0]?.length ?? 16
+          const spriteH = f.sprite.length
+          // Draw 3 LEDs at different vertical positions on the rack face
+          const ledPositions = [
+            { row: Math.round(spriteH * 0.25), phase: 0 },
+            { row: Math.round(spriteH * 0.45), phase: 1.2 },
+            { row: Math.round(spriteH * 0.65), phase: 2.4 },
+          ]
+          for (const led of ledPositions) {
+            // Each LED blinks at a different rate/phase
+            const t = (now + led.phase * 700) / 800
+            const blink = Math.sin(t) > 0
+            const color = blink ? '#00ff88' : '#ff3344'
+            c.fillStyle = color
+            const lx = fx + Math.round((spriteW * 0.65) * zoom)
+            const ly = fy + Math.round(led.row * zoom)
+            c.fillRect(lx, ly, ledSize, ledSize)
+          }
+        }
       },
     })
   }

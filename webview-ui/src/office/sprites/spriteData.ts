@@ -1015,6 +1015,7 @@ export interface CharacterSprites {
   walk: Record<Direction, [SpriteData, SpriteData, SpriteData, SpriteData]>
   typing: Record<Direction, [SpriteData, SpriteData]>
   reading: Record<Direction, [SpriteData, SpriteData]>
+  sleep?: Record<Direction, [SpriteData, SpriteData]>
 }
 
 const spriteCache = new Map<string, CharacterSprites>()
@@ -1276,6 +1277,86 @@ const CORGI_RIGHT_STAND: SpriteData = [
   [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
 ]
 
+// ── Cat sleep sprites (curled up ball) ─────────────────────────
+const CAT_SLEEP_1: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,catL,catL,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,catL,catI,catO,catL,_,_,_,_,_,_,_,_,_],
+  [_,_,_,catL,catO,catG,catO,catL,catL,catL,catL,catL,_,_,_,_],
+  [_,_,_,_,catL,catN,catW,catO,catO,catO,catO,catO,catL,_,_,_],
+  [_,_,_,_,catL,catC,catC,catO,catO,catO,catO,catO,catL,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catD,catL,_,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catD,catL,_,_,_,_],
+  [_,_,_,_,catL,catL,catL,catL,catL,catL,catL,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+// Frame 2: breathing in — body slightly expanded
+const CAT_SLEEP_2: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,catL,catL,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,catL,catI,catO,catL,_,_,_,_,_,_,_,_,_],
+  [_,_,_,catL,catO,catG,catO,catL,catL,catL,catL,catL,_,_,_,_],
+  [_,_,_,_,catL,catN,catW,catO,catO,catO,catO,catO,catL,_,_,_],
+  [_,_,_,_,catL,catC,catC,catO,catO,catO,catO,catO,catO,catL,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catO,catD,catL,_,_],
+  [_,_,_,catL,catO,catO,catO,catO,catO,catO,catO,catD,catL,_,_,_],
+  [_,_,_,_,catL,catL,catL,catL,catL,catL,catL,catL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+// ── Corgi sleep sprites (lying flat loaf) ─────────────────────
+const CORGI_SLEEP_1: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,corL,corL,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,corL,corO,corP,corL,_,_,_,_,_,_,_,_,_,_,_],
+  [_,corL,corO,corO,corO,corL,corL,corL,corL,corL,corL,_,_,_,_,_],
+  [_,_,corL,corW,corE,corW,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,corL,corW,corN,corW,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corW,corW,corO,corO,corO,corL,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corW,corW,corO,corO,corO,corL,_,_,_],
+  [_,_,_,_,corL,corL,corL,corL,corL,corL,corL,corL,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
+// Frame 2: breathing in — body slightly expanded
+const CORGI_SLEEP_2: SpriteData = [
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,corL,corL,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,corL,corO,corP,corL,_,_,_,_,_,_,_,_,_,_,_],
+  [_,corL,corO,corO,corO,corL,corL,corL,corL,corL,corL,_,_,_,_,_],
+  [_,_,corL,corW,corE,corW,corO,corO,corO,corO,corO,corL,_,_,_,_],
+  [_,_,corL,corW,corN,corW,corO,corO,corO,corO,corO,corO,corL,_,_,_],
+  [_,_,_,corL,corO,corO,corO,corW,corW,corO,corO,corO,corO,corL,_,_],
+  [_,_,_,corL,corO,corO,corO,corW,corW,corO,corO,corO,corL,_,_,_],
+  [_,_,_,_,corL,corL,corL,corL,corL,corL,corL,corL,corL,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+  [_,_,_,_,_,_,_,_,_,_,_,_,_,_,_,_],
+]
+
 // ── Pet sprite assembly ────────────────────────────────────────
 
 function buildPetSprites(
@@ -1289,6 +1370,7 @@ function buildPetSprites(
   upLegsB: string[][],
   rightLegsA: string[][],
   rightLegsB: string[][],
+  sleepFrames?: [SpriteData, SpriteData],
 ): CharacterSprites {
   const flip = flipSpriteHorizontal
   const downWalk = petWalkFrames(downStand, legRow, downLegsA, downLegsB)
@@ -1297,7 +1379,7 @@ function buildPetSprites(
   const leftWalk: [SpriteData, SpriteData, SpriteData, SpriteData] = [
     flip(rightWalk[0]), flip(rightWalk[1]), flip(rightWalk[2]), flip(rightWalk[3]),
   ]
-  return {
+  const result: CharacterSprites = {
     walk: {
       [Dir.DOWN]: downWalk,
       [Dir.UP]: upWalk,
@@ -1317,6 +1399,17 @@ function buildPetSprites(
       [Dir.LEFT]: [flip(rightStand), flip(rightStand)] as [SpriteData, SpriteData],
     } as Record<Direction, [SpriteData, SpriteData]>,
   }
+  if (sleepFrames) {
+    // Same sprite for all directions (pet is curled up / lying down)
+    const pair: [SpriteData, SpriteData] = sleepFrames
+    result.sleep = {
+      [Dir.DOWN]: pair,
+      [Dir.UP]: pair,
+      [Dir.RIGHT]: pair,
+      [Dir.LEFT]: pair,
+    } as Record<Direction, [SpriteData, SpriteData]>
+  }
+  return result
 }
 
 const petSpriteCache = new Map<string, CharacterSprites>()
@@ -1365,6 +1458,8 @@ export function getPetSprites(petType: string): CharacterSprites {
         [_,_,_,_,_,catL,catO,_,_,catO,catL,_,_,_,_,_],
         [_,_,_,_,_,_,catL,_,catL,_,_,_,_,_,_,_],
       ],
+      // sleep frames
+      [CAT_SLEEP_1, CAT_SLEEP_2],
     )
   } else {
     // corgi
@@ -1400,6 +1495,8 @@ export function getPetSprites(petType: string): CharacterSprites {
         [_,_,_,corO,corL,_,_,_,corL,corO,_,_,_,_,_,_],
         [_,_,_,_,corL,_,_,_,_,corL,_,_,_,_,_,_],
       ],
+      // sleep frames
+      [CORGI_SLEEP_1, CORGI_SLEEP_2],
     )
   }
 

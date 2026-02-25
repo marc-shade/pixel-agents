@@ -38,6 +38,7 @@ export const CharacterState = {
   IDLE: 'idle',
   WALK: 'walk',
   TYPE: 'type',
+  SLEEP: 'sleep',
 } as const
 export type CharacterState = (typeof CharacterState)[keyof typeof CharacterState]
 
@@ -72,6 +73,8 @@ export interface FurnitureInstance {
   y: number
   /** Y value used for depth sorting (typically bottom edge) */
   zY: number
+  /** Furniture catalog type ID, used for animated rendering (e.g. server-rack LEDs) */
+  type?: string
 }
 
 export interface ToolActivity {
@@ -191,6 +194,8 @@ export interface Character {
   isPet: boolean
   /** Pet type identifier (e.g., 'cat', 'corgi'), null if not a pet */
   petType: string | null
+  /** Sleep duration countdown (pet only) */
+  sleepTimer: number
   /** Active matrix spawn/despawn effect, or null */
   matrixEffect: 'spawn' | 'despawn' | null
   /** Timer counting up from 0 to MATRIX_EFFECT_DURATION */
